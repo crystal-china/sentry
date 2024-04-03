@@ -171,7 +171,9 @@ module Sentry
       {% if flag?(:linux) %}
         @sound_player = `which aplay 2>/dev/null`.chomp
       {% elsif flag(:darwin) %}
-        @sound_player = `which afplay 2>/dev/null`.chomp
+        # @sound_player = `which afplay 2>/dev/null`.chomp
+        # afplay not work with pipe
+        @sound_player = ""
       {% end %}
     end
 
