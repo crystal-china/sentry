@@ -54,7 +54,7 @@ module Sentry
 
     @display_name : String?
 
-    def display_name
+    def display_name : String?
       @display_name ||= self.class.shard_name
     end
 
@@ -63,13 +63,13 @@ module Sentry
       @display_name = new_display_name
     end
 
-    def display_name!
+    def display_name! : String
       display_name.not_nil!
     end
 
     @build : String?
 
-    def build
+    def build : String
       @build ||= "crystal build #{self.src_path}"
     end
 
@@ -78,13 +78,13 @@ module Sentry
       @build = new_command
     end
 
-    def build_args
+    def build_args : Array(String)
       @build_args.strip.split(" ").reject(&.empty?)
     end
 
     @run : String?
 
-    def run
+    def run : String
       @run ||= "./#{self.class.shard_name}"
     end
 
@@ -93,14 +93,14 @@ module Sentry
       @run = new_command
     end
 
-    def run_args
+    def run_args : Array(String)
       @run_args.strip.split(" ").reject(&.empty?)
     end
 
     @[YAML::Field(ignore: true)]
     setter should_build : Bool = true
 
-    def should_build?
+    def should_build? : Bool
       @should_build ||= begin
         if build_command = @build
           build_command.empty?
@@ -110,7 +110,7 @@ module Sentry
       end
     end
 
-    def merge!(other : self)
+    def merge!(other : self) : Nil
       self.display_name = other.display_name! if other.sets_display_name?
       self.info = other.info if other.info
       self.build = other.build if other.sets_build_command?
@@ -177,7 +177,7 @@ module Sentry
       {% end %}
     end
 
-    private def stdout(str : String)
+    private def stdout(str : String) : Nil
       if @colorize
         puts str.colorize.fore(:yellow)
       else
@@ -185,7 +185,7 @@ module Sentry
       end
     end
 
-    private def build_app_process
+    private def build_app_process : Process::Status
       stdout "🤖  compiling #{display_name}..."
       build_args = @build_args
       if build_args.size > 0
@@ -195,9 +195,8 @@ module Sentry
       end
     end
 
-    private def create_app_process
-      app_process = @app_process
-      if app_process.is_a? Process
+    private def create_app_process : Process
+      if (app_process = @app_process).is_a? Process
         unless app_process.terminated?
           stdout "🤖  killing #{display_name}..."
           app_process.signal(:kill)
@@ -206,51 +205,64 @@ module Sentry
       end
 
       stdout "🤖  starting #{display_name}..."
-      run_args = @run_args
-      if run_args.size > 0
-        @app_process = Process.new(@run_command, run_args, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
-      else
-        @app_process = Process.new(@run_command, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
-      end
+
+      run_args = @run_args.size > 0 ? @run_args : [] of String
+
+      @app_process = Process.new(
+        @run_command,
+        run_args,
+        output: Process::Redirect::Inherit,
+        error: Process::Redirect::Inherit
+      )
     end
 
-    private def get_timestamp(file : String)
+    private def get_timestamp(file : String) : String
       File.info(file).modification_time.to_unix.to_s
     end
 
     # Compiles and starts the application
     #
-    def start_app
+    def start_app : Process?
       return create_app_process unless @should_build
-      build_result = build_app_process()
+
+      build_result = build_app_process
+
       if build_result && build_result.success?
         @app_built = true
-        create_app_process()
+        process = create_app_process
+
         unless @sound_player.blank?
           Process.new(command: @sound_player, input: @success_wav)
           @success_wav.rewind
         end
+
+        process
       elsif !@app_built # if build fails on first time compiling, then exit
         stdout "🤖  Compile time errors detected. SentryBot shutting down..."
+
         unless @sound_player.blank?
           Process.new(command: @sound_player, input: @error_wav)
           @error_wav.rewind
         end
+
         exit 1
       else
         unless @sound_player.blank?
           Process.new(command: @sound_player, input: @error_wav)
           @error_wav.rewind
         end
+
+        nil
       end
     end
 
     # Scans all of the `@files`
     #
-    def scan_files
+    def scan_files : Process?
       file_changed = false
       app_process = @app_process
       files = @files
+
       begin
         Dir.glob(files) do |file|
           timestamp = get_timestamp(file)
@@ -273,16 +285,23 @@ module Sentry
       start_app() if (file_changed || app_process.nil?)
     end
 
-    def run_install_shards
+    def run_install_shards : Nil
       stdout "🤖  Installing shards..."
-      install_result = Process.run("shards", ["install"], shell: true, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
+
+      install_result = Process.run(
+        "shards install",
+        ["install"],
+        output: Process::Redirect::Inherit,
+        error: Process::Redirect::Inherit
+      )
+
       if !install_result || !install_result.success?
         stdout "🤖  Error installing shards. SentryBot shutting down..."
         exit 1
       end
     end
 
-    def run
+    def run : Nil
       stdout "🤖  Your SentryBot is vigilant. beep-boop..."
 
       run_install_shards if @should_install_shards
@@ -292,13 +311,14 @@ module Sentry
           stdout "🤖  Powering down your SentryBot..."
           break
         end
+
         scan_files
         sleep 1.second
       end
     end
 
-    def kill
-      @should_kill = true
-    end
+    # def kill
+    #   @should_kill = true
+    # end
   end
 end
