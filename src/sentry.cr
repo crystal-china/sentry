@@ -293,7 +293,7 @@ module Sentry
           break
         end
         scan_files
-        sleep 1
+        sleep 1.second
       end
     end
 
