@@ -22,7 +22,7 @@ module Sentry
     property src_path : String?
     property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
 
-    property? install_shards : Bool = false
+    property? should_install_shards : Bool = false
     property? colorize : Bool = true
     property? info : Bool = false
 
@@ -86,7 +86,7 @@ module Sentry
       self.run = other.run if other.sets_run_command?
       self.run_args_str = other.run_args.join(" ") unless other.run_args.empty?
       self.watch = other.watch unless other.watch.empty?
-      self.install_shards = other.install_shards?
+      self.should_install_shards = other.should_install_shards?
       self.colorize = other.colorize?
       self.src_path = other.src_path
     end
@@ -96,7 +96,7 @@ module Sentry
       🤖  Sentry configuration:
             display name:   #{display_name}
             shard name:     #{self.class.shard_name}
-            install shards: #{install_shards?}
+            install shards: #{should_install_shards?}
             info:           #{info?}
             build:          #{build}
             build_args:     #{build_args}

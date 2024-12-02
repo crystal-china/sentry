@@ -15,16 +15,13 @@ module Sentry
       @run_command : String,
       @build_args : Array(String) = [] of String,
       @run_args : Array(String) = [] of String,
-      files = [] of String,
+      @files = [] of String,
       @should_build = true,
-      install_shards = false,
-      colorize = true
+      @should_install_shards = false,
+      @colorize = true
     )
-      @files = files
       @should_kill = false
       @app_built = false
-      @should_install_shards = install_shards
-      @colorize = colorize
 
       {% if flag?(:linux) %}
         @sound_player = `which aplay 2>/dev/null`.chomp
