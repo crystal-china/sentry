@@ -32,8 +32,6 @@ module Sentry
 
     property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
 
-    property install_shards : Bool = false
-
     # Initializing an empty configuration provides no default values.
     def initialize
     end
