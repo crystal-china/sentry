@@ -16,13 +16,15 @@ module Sentry
     property? sets_build_command : Bool = false
     @[YAML::Field(ignore: true)]
     property? sets_run_command : Bool = false
+    @[YAML::Field(ignore: true)]
+    setter should_build : Bool = true
 
-    property? info : Bool = false
     property src_path : String = "./src/#{Sentry::Config.shard_name}.cr"
     property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
 
     property? install_shards : Bool = false
     property? colorize : Bool = true
+    property? info : Bool = false
 
     setter build_args_str : String = ""
     setter run_args : String = ""
@@ -70,12 +72,9 @@ module Sentry
       @run_args.strip.split(" ").reject(&.empty?)
     end
 
-    @[YAML::Field(ignore: true)]
-    setter should_build : Bool = true
-
     def should_build? : Bool
       @should_build ||= begin
-        if build_command = @build
+        if (build_command = @build)
           build_command.empty?
         else
           false
