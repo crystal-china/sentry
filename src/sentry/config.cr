@@ -12,25 +12,20 @@ module Sentry
 
     @[YAML::Field(ignore: true)]
     property? sets_display_name : Bool = false
-
     @[YAML::Field(ignore: true)]
     property? sets_build_command : Bool = false
-
     @[YAML::Field(ignore: true)]
     property? sets_run_command : Bool = false
 
     property info : Bool = false
-
-    property? colorize : Bool = true
-
     property src_path : String = "./src/#{Sentry::Config.shard_name}.cr"
+    property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
 
     property? install_shards : Bool = false
+    property? colorize : Bool = true
 
     setter build_args_str : String = ""
     setter run_args : String = ""
-
-    property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
 
     # Initializing an empty configuration provides no default values.
     def initialize
