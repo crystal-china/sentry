@@ -2,6 +2,10 @@ module Sentry
   class Config
     include YAML::Serializable
 
+    @display_name : String?
+    @build : String?
+    @run : String?
+
     # `shard_name` is set as a class property so that it can be inferred from
     # the `shard.yml` in the project directory.
     class_property shard_name : String?
@@ -33,20 +37,15 @@ module Sentry
 
     # Initializing an empty configuration provides no default values.
     def initialize
-      @display_name = nil
       @sets_display_name = false
       @info = false
       @src_path = "./src/#{Sentry::Config.shard_name}.cr"
-      @build = nil
       @build_args = ""
-      @run = nil
       @run_args = ""
       @watch = [] of String
       @install_shards = false
       @colorize = true
     end
-
-    @display_name : String?
 
     def display_name : String?
       @display_name ||= self.class.shard_name
@@ -61,8 +60,6 @@ module Sentry
       display_name.not_nil!
     end
 
-    @build : String?
-
     def build : String
       @build ||= "crystal build #{self.src_path}"
     end
@@ -75,8 +72,6 @@ module Sentry
     def build_args : Array(String)
       @build_args.strip.split(" ").reject(&.empty?)
     end
-
-    @run : String?
 
     def run : String
       @run ||= "./#{self.class.shard_name}"
