@@ -27,7 +27,7 @@ module Sentry
 
     property? install_shards : Bool = false
 
-    setter build_args : String = ""
+    setter build_args_str : String = ""
     setter run_args : String = ""
 
     property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
@@ -61,7 +61,7 @@ module Sentry
     end
 
     def build_args : Array(String)
-      @build_args.strip.split(" ").reject(&.empty?)
+      @build_args_str.strip.split(" ").reject(&.empty?)
     end
 
     def run : String
@@ -94,7 +94,7 @@ module Sentry
       self.display_name = other.display_name! if other.sets_display_name?
       self.info = other.info if other.info
       self.build = other.build if other.sets_build_command?
-      self.build_args = other.build_args.join(" ") unless other.build_args.empty?
+      self.build_args_str = other.build_args.join(" ") unless other.build_args.empty?
       self.run = other.run if other.sets_run_command?
       self.run_args = other.run_args.join(" ") unless other.run_args.empty?
       self.watch = other.watch unless other.watch.empty?

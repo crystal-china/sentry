@@ -29,7 +29,7 @@ end
 
 if shard_build_output_binary_name
   cli_config.run = "./bin/#{shard_build_output_binary_name}"
-  cli_config.build_args = "build #{cli_config.src_path} -o ./bin/#{shard_build_output_binary_name}"
+  cli_config.build_args_str = "build #{cli_config.src_path} -o ./bin/#{shard_build_output_binary_name}"
 end
 
 OptionParser.parse do |parser|
@@ -59,7 +59,11 @@ OptionParser.parse do |parser|
 
   parser.on(
     "--build-args=ARGS",
-    "Specifies arguments for the build command") { |args| cli_config.build_args = args }
+    "Specifies arguments for the build command"
+  ) do |args|
+    cli_config.build_args_str = args
+  end
+
   parser.on(
     "--no-build",
     "Skips the build step"
