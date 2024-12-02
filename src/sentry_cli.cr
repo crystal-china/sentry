@@ -83,7 +83,7 @@ OptionParser.parse do |parser|
     "--run-args=ARGS",
     "Specifies arguments for the run command"
   ) do |opt|
-    cli_config.run_args = opt
+    cli_config.run_args_str = opt
   end
 
   parser.on(

@@ -27,7 +27,7 @@ module Sentry
     property? info : Bool = false
 
     setter build_args_str : String = ""
-    setter run_args : String = ""
+    setter run_args_str : String = ""
 
     # Initializing an empty configuration provides no default values.
     def initialize
@@ -69,7 +69,7 @@ module Sentry
     end
 
     def run_args : Array(String)
-      @run_args.strip.split(" ").reject(&.empty?)
+      @run_args_str.strip.split(" ").reject(&.empty?)
     end
 
     def should_build? : Bool
@@ -88,7 +88,7 @@ module Sentry
       self.build = other.build if other.sets_build_command?
       self.build_args_str = other.build_args.join(" ") unless other.build_args.empty?
       self.run = other.run if other.sets_run_command?
-      self.run_args = other.run_args.join(" ") unless other.run_args.empty?
+      self.run_args_str = other.run_args.join(" ") unless other.run_args.empty?
       self.watch = other.watch unless other.watch.empty?
       self.install_shards = other.install_shards?
       self.colorize = other.colorize?
