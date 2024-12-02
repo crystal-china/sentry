@@ -19,7 +19,7 @@ module Sentry
     @[YAML::Field(ignore: true)]
     setter should_build : Bool = true
 
-    property src_path : String = "./src/#{Sentry::Config.shard_name}.cr"
+    property src_path : String?
     property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
 
     property? install_shards : Bool = false
