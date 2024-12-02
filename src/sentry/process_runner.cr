@@ -41,10 +41,12 @@ module Sentry
       loop do
         if @should_kill
           stdout "🤖  Powering down your SentryBot..."
+
           break
         end
 
         scan_files
+
         sleep 1.second
       end
     end
@@ -53,14 +55,15 @@ module Sentry
       stdout "🤖  Installing shards..."
 
       install_result = Process.run(
-        "shards install",
+        "shards",
         ["install"],
-        output: Process::Redirect::Inherit,
-        error: Process::Redirect::Inherit
+        output: :inherit,
+        error: :inherit
       )
 
       if !install_result || !install_result.success?
         stdout "🤖  Error installing shards. SentryBot shutting down..."
+
         exit 1
       end
     end
@@ -74,13 +77,16 @@ module Sentry
 
       begin
         Dir.glob(files) do |file|
-          timestamp = get_timestamp(file)
+          timestamp = File.info(file).modification_time.to_unix.to_s
+
           if FILE_TIMESTAMPS[file]? && FILE_TIMESTAMPS[file] != timestamp
             FILE_TIMESTAMPS[file] = timestamp
             file_changed = true
+
             stdout "🤖  #{file}"
           elsif FILE_TIMESTAMPS[file]?.nil?
             stdout "🤖  watching file: #{file}"
+
             FILE_TIMESTAMPS[file] = timestamp
             file_changed = true if (app_process && !app_process.terminated?)
           end
@@ -91,7 +97,7 @@ module Sentry
         # https://github.com/crystal-lang/crystal/blob/677422167cbcce0aeea49531896dbdcadd2762db/src/crystal/system/unix/dir.cr#L19
       end
 
-      start_app() if (file_changed || app_process.nil?)
+      start_app() if file_changed || app_process.nil?
     end
 
     # Compiles and starts the application
@@ -137,8 +143,8 @@ module Sentry
       Process.run(
         @build_command,
         @build_args,
-        output: Process::Redirect::Inherit,
-        error: Process::Redirect::Inherit
+        output: :inherit,
+        error: :inherit
       )
     end
 
@@ -161,10 +167,6 @@ module Sentry
         output: Process::Redirect::Inherit,
         error: Process::Redirect::Inherit
       )
-    end
-
-    private def get_timestamp(file : String) : String
-      File.info(file).modification_time.to_unix.to_s
     end
 
     private def stdout(str : String) : Nil
