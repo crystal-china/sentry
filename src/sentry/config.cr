@@ -17,7 +17,7 @@ module Sentry
     @[YAML::Field(ignore: true)]
     property? sets_run_command : Bool = false
 
-    property info : Bool = false
+    property? info : Bool = false
     property src_path : String = "./src/#{Sentry::Config.shard_name}.cr"
     property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
 
@@ -85,7 +85,7 @@ module Sentry
 
     def merge!(other : self) : Nil
       self.display_name = other.display_name! if other.sets_display_name?
-      self.info = other.info if other.info
+      self.info = other.info? if other.info?
       self.build = other.build if other.sets_build_command?
       self.build_args_str = other.build_args.join(" ") unless other.build_args.empty?
       self.run = other.run if other.sets_run_command?
@@ -102,7 +102,7 @@ module Sentry
             display name:   #{display_name}
             shard name:     #{self.class.shard_name}
             install shards: #{install_shards?}
-            info:           #{info}
+            info:           #{info?}
             build:          #{build}
             build_args:     #{build_args}
             src_path:       #{src_path}

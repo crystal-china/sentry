@@ -143,7 +143,7 @@ end
 config = Sentry::Config.from_yaml(config_yaml)
 config.merge!(cli_config)
 
-if config.info
+if config.info?
   if config.colorize?
     puts config.to_s.colorize.fore(:yellow)
   else
