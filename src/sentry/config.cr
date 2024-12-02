@@ -33,10 +33,6 @@ module Sentry
     def initialize
     end
 
-    def display_name : String?
-      @display_name ||= self.class.shard_name
-    end
-
     def display_name=(new_display_name : String)
       @sets_display_name = true
       @display_name = new_display_name
@@ -110,6 +106,10 @@ module Sentry
             watch:          #{watch}
             colorize:       #{colorize?}
       CONFIG
+    end
+
+    private def display_name : String?
+      @display_name ||= self.class.shard_name
     end
   end
 end
