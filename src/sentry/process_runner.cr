@@ -2,12 +2,13 @@ module Sentry
   class ProcessRunner
     FILE_TIMESTAMPS = {} of String => String # {file => timestamp}
 
-    getter app_process : Process?
-    property should_build = true
-    property files = [] of String
     @sound_player : String?
     @success_wav : BakedFileSystem::BakedFile = SoundFileStorage.get("success.wav")
     @error_wav : BakedFileSystem::BakedFile = SoundFileStorage.get("error.wav")
+    @app_process : Process?
+
+    property should_build = true
+    property files = [] of String
 
     def initialize(
       @display_name : String,
@@ -154,13 +155,11 @@ module Sentry
 
       stdout "🤖  starting #{@display_name}..."
 
-      run_args = @run_args.size > 0 ? @run_args : [] of String
-
       @app_process = Process.new(
         @run_command,
-        run_args,
-        output: Process::Redirect::Inherit,
-        error: Process::Redirect::Inherit
+        @run_args,
+        output: :inherit,
+        error: :inherit
       )
     end
 
