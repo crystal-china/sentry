@@ -2,8 +2,7 @@ module Sentry
   class ProcessRunner
     FILE_TIMESTAMPS = {} of String => String # {file => timestamp}
 
-    getter app_process : Process? = nil
-    property display_name : String
+    getter app_process : Process?
     property should_build = true
     property files = [] of String
     @sound_player : String?
@@ -138,7 +137,7 @@ module Sentry
     end
 
     private def build_app_process : Process::Status
-      stdout "🤖  compiling #{display_name}..."
+      stdout "🤖  compiling #{@display_name}..."
 
       Process.run(
         @build_command,
@@ -151,13 +150,13 @@ module Sentry
     private def create_app_process : Process
       if (app_process = @app_process).is_a? Process
         unless app_process.terminated?
-          stdout "🤖  killing #{display_name}..."
+          stdout "🤖  killing #{@display_name}..."
           app_process.signal(:kill)
           app_process.wait
         end
       end
 
-      stdout "🤖  starting #{display_name}..."
+      stdout "🤖  starting #{@display_name}..."
 
       run_args = @run_args.size > 0 ? @run_args : [] of String
 
