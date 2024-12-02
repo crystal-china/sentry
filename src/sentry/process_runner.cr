@@ -21,6 +21,10 @@ module Sentry
       @should_kill = false
       @app_built = false
 
+      Signal::INT.trap do
+        @should_kill = true
+      end
+
       {% if flag?(:linux) %}
         @sound_player = `which aplay 2>/dev/null`.chomp
       {% end %}
@@ -166,9 +170,5 @@ module Sentry
         puts str
       end
     end
-
-    # def kill
-    #   @should_kill = true
-    # end
   end
 end
