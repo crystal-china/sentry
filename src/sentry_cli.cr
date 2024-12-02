@@ -18,7 +18,7 @@ if shard_yml && (targets = shard_yml["targets"]?)
     # use targets[<shard_name>]["main"] if exists
     if name && (main_path = targets.dig?(name, "main"))
       cli_config.src_path = main_path.as_s
-    elsif ((raw = targets.raw) && raw.is_a?(Hash))
+    elsif (raw = targets.raw) && raw.is_a?(Hash)
       # otherwise, use the first key you find targets[<first_key>]["main"]
       if (first_key = raw.keys[0]?) && (main_path = targets.dig?(first_key, "main"))
         cli_config.src_path = main_path.as_s
@@ -34,59 +34,94 @@ OptionParser.parse do |parser|
   parser.on(
     "-n NAME",
     "--name=NAME",
-    "Sets the display name of the app process (default name: #{Sentry::Config.shard_name})") { |name| cli_config.display_name = name }
+    "Sets the display name of the app process (default name: #{Sentry::Config.shard_name})"
+  ) do |opt|
+    cli_config.display_name = opt
+  end
+
   parser.on(
     "--src=PATH",
-    "Sets the entry path for the main crystal file (default inferred from shard.yaml)") { |path| cli_config.src_path = path }
+    "Sets the entry path for the main crystal file (default inferred from shard.yaml)"
+  ) do |opt|
+    cli_config.src_path = opt
+  end
+
   parser.on(
     "-b COMMAND",
     "--build=COMMAND",
-    "Overrides the default build command (will override --src flag)") { |command| cli_config.build = command }
+    "Overrides the default build command (will override --src flag)"
+  ) do |command|
+    cli_config.build = command
+  end
+
   parser.on(
     "--build-args=ARGS",
     "Specifies arguments for the build command") { |args| cli_config.build_args = args }
   parser.on(
     "--no-build",
-    "Skips the build step") { cli_config.should_build = false }
+    "Skips the build step"
+  ) do
+    cli_config.should_build = false
+  end
+
   parser.on(
     "-r COMMAND",
     "--run=COMMAND",
-    "Overrides the default run command") { |command| cli_config.run = command }
+    "Overrides the default run command"
+  ) do |opt|
+    cli_config.run = opt
+  end
+
   parser.on(
     "--run-args=ARGS",
-    "Specifies arguments for the run command") { |args| cli_config.run_args = args }
+    "Specifies arguments for the run command"
+  ) do |opt|
+    cli_config.run_args = opt
+  end
+
   parser.on(
     "-w FILE",
     "--watch=FILE",
-    "Overrides default files and appends to list of watched files") do |file|
-    cli_config.watch << file
+    "Overrides default files and appends to list of watched files"
+  ) do |opt|
+    cli_config.watch << opt
   end
+
   parser.on(
     "-c FILE",
     "--config=FILE",
-    "Specifies a file to load for automatic configuration (default: '.sentry.yml')") do |file|
-    cli_config_file_name = file
+    "Specifies a file to load for automatic configuration (default: '.sentry.yml')"
+  ) do |opt|
+    cli_config_file_name = opt
   end
+
   parser.on(
     "--install",
-    "Run 'shards install' once before running Sentry build and run commands") do
+    "Run 'shards install' once before running Sentry build and run commands"
+  ) do
     cli_config.install_shards = true
   end
+
   parser.on(
     "--no-color",
-    "Removes colorization from output") do
+    "Removes colorization from output"
+  ) do
     cli_config.colorize = false
   end
+
   parser.on(
     "-i",
     "--info",
-    "Shows the values for build/run commands, build/run args, and watched files") do
+    "Shows the values for build/run commands, build/run args, and watched files"
+  ) do
     cli_config.info = true
   end
+
   parser.on(
     "-h",
     "--help",
-    "Show this help") do
+    "Show this help"
+  ) do
     puts parser
     exit 0
   end
