@@ -12,21 +12,22 @@ end
 cli_config = Sentry::Config.new
 cli_config_file_name = ".sentry.yml"
 
-# Set the default entry src path from shard.yml
+# Set the default entry src path and build output binary name from shard.yml
 if shard_yml && (targets = shard_yml["targets"]?)
-  if targets
-    # use targets[<shard_name>]["main"] if exists
-    if name && (main_path = targets.dig?(name, "main"))
+  # use targets[<shard_name>]["main"] if exists
+  if name && (main_path = targets.dig?(name, "main"))
+    shard_build_output_binary_name = name.as_s
+    cli_config.src_path = main_path.as_s
+  elsif (raw = targets.raw) && raw.is_a?(Hash)
+    # otherwise, use the first key you find targets[<first_key>]["main"]
+    if (first_key = raw.keys[0]?) && (main_path = targets.dig?(first_key, "main"))
+      shard_build_output_binary_name = first_key.as_s
       cli_config.src_path = main_path.as_s
-    elsif (raw = targets.raw) && raw.is_a?(Hash)
-      # otherwise, use the first key you find targets[<first_key>]["main"]
-      if (first_key = raw.keys[0]?) && (main_path = targets.dig?(first_key, "main"))
-        cli_config.src_path = main_path.as_s
-      end
     end
   end
 end
 
+# cli_config.run = "./bin/#{shard_build_output_binary_name}" if shard_build_output_binary_name
 cli_config.run = "./#{cli_config.src_path[/\/(.*)\.cr/, 1]}"
 
 OptionParser.parse do |parser|
@@ -127,9 +128,10 @@ OptionParser.parse do |parser|
   end
 end
 
-config_yaml = ""
 if File.exists?(cli_config_file_name)
   config_yaml = File.read(cli_config_file_name)
+else
+  config_yaml = ""
 end
 
 config = Sentry::Config.from_yaml(config_yaml)
@@ -158,6 +160,6 @@ if Sentry::Config.shard_name
 
   process_runner.run
 else
-  puts "🤖  Sentry error: 'name' not given and not found in shard.yml"
+  puts "🤖  Sentry error: please set the entry path for the main crystal file"
   exit 1
 end
