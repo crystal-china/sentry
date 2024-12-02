@@ -142,7 +142,7 @@ module Sentry
   end
 
   class ProcessRunner
-    getter app_process : (Nil | Process) = nil
+    getter app_process : Process? = nil
     property display_name : String
     property should_build = true
     property files = [] of String
