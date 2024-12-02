@@ -16,12 +16,11 @@ module Sentry
       @build_args : Array(String) = [] of String,
       @run_args : Array(String) = [] of String,
       files = [] of String,
-      should_build = true,
+      @should_build = true,
       install_shards = false,
       colorize = true
     )
       @files = files
-      @should_build = should_build
       @should_kill = false
       @app_built = false
       @should_install_shards = install_shards
