@@ -4,5 +4,5 @@ require "./sentry/*"
 require "./sound_file_storage"
 
 module Sentry
-  FILE_TIMESTAMPS = {} of String => String # {file => timestamp}
+  VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify }}
 end

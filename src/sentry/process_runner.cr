@@ -1,5 +1,7 @@
 module Sentry
   class ProcessRunner
+    FILE_TIMESTAMPS = {} of String => String # {file => timestamp}
+
     getter app_process : Process? = nil
     property display_name : String
     property should_build = true
