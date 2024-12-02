@@ -28,7 +28,6 @@ module Sentry
     property? install_shards : Bool = false
 
     setter build_args : String = ""
-
     setter run_args : String = ""
 
     property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
@@ -37,14 +36,6 @@ module Sentry
 
     # Initializing an empty configuration provides no default values.
     def initialize
-      @sets_display_name = false
-      @info = false
-      @src_path = "./src/#{Sentry::Config.shard_name}.cr"
-      @build_args = ""
-      @run_args = ""
-      @watch = [] of String
-      @install_shards = false
-      @colorize = true
     end
 
     def display_name : String?
