@@ -43,12 +43,13 @@ module Sentry
 
     private def build_app_process : Process::Status
       stdout "🤖  compiling #{display_name}..."
-      build_args = @build_args
-      if build_args.size > 0
-        Process.run(@build_command, build_args, shell: true, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
-      else
-        Process.run(@build_command, shell: true, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
-      end
+
+      Process.run(
+        @build_command,
+        @build_args,
+        output: Process::Redirect::Inherit,
+        error: Process::Redirect::Inherit
+      )
     end
 
     private def create_app_process : Process

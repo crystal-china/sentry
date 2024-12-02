@@ -52,7 +52,7 @@ module Sentry
     end
 
     def build : String
-      @build ||= "crystal build #{self.src_path}"
+      @build ||= "crystal"
     end
 
     def build=(new_command : String)
@@ -65,7 +65,7 @@ module Sentry
     end
 
     def run : String
-      @run ||= "./#{self.class.shard_name}"
+      @run ||= "./bin/#{self.class.shard_name}"
     end
 
     def run=(new_command : String)
