@@ -7,9 +7,6 @@ module Sentry
     @error_wav : BakedFileSystem::BakedFile = SoundFileStorage.get("error.wav")
     @app_process : Process?
 
-    property should_build = true
-    property files = [] of String
-
     def initialize(
       @display_name : String,
       @build_command : String,
@@ -69,10 +66,9 @@ module Sentry
     private def scan_files : Process?
       file_changed = false
       app_process = @app_process
-      files = @files
 
       begin
-        Dir.glob(files) do |file|
+        Dir.glob(@files) do |file|
           timestamp = File.info(file).modification_time.to_unix.to_s
 
           if FILE_TIMESTAMPS[file]? && FILE_TIMESTAMPS[file] != timestamp
