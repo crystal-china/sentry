@@ -74,13 +74,14 @@ module Sentry
       self.build_args = cli_config.build_args if cli_config.sets_build_args?
       self.run_args = cli_config.run_args unless cli_config.run_args.empty?
 
-      self.should_build = cli_config.should_build?
-
       self.info = cli_config.info? if cli_config.info?
       self.watch = cli_config.watch unless cli_config.watch.empty?
-      self.should_install_shards = cli_config.should_install_shards?
+
+      # following always use default
+      self.should_build = cli_config.should_build?
       self.colorize = cli_config.colorize?
       self.src_path = cli_config.src_path
+      self.should_install_shards = cli_config.should_install_shards?
     end
 
     def to_s(io : IO)

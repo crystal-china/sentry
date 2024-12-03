@@ -50,8 +50,8 @@ OptionParser.parse do |parser|
 
   parser.on(
     "--src=PATH",
-    "Sets the entry path for the main crystal file (default inferred from shard.yml, \
-it is '#{cli_config.src_path}')"
+    "Sets the entry path for the main crystal file inferred from shard.yml, (\
+default: #{cli_config.src_path})"
   ) do |opt|
     cli_config.src_path = opt
   end
@@ -66,8 +66,7 @@ it is '#{cli_config.src_path}')"
 
   parser.on(
     "--build-args=ARGS",
-    "Specifies arguments for the build command, (\
-default: #{cli_config.build_args}, will override --src flag)"
+    "Specifies arguments for the build command, (default: #{cli_config.build_args})"
   ) do |args|
     cli_config.build_args = args
   end
@@ -128,7 +127,7 @@ default: #{cli_config.build_args}, will override --src flag)"
   parser.on(
     "-i",
     "--info",
-    "Shows the configuration informations, (deafult: #{cli_config.info?})"
+    "Shows the configuration informations, (default: #{cli_config.info?})"
   ) do
     cli_config.info = true
   end
