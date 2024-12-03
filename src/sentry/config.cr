@@ -56,13 +56,9 @@ module Sentry
     end
 
     def should_build? : Bool
-      # 这个设计的真巧妙
-      @should_build ||=
-        if (build_command = @build_command)
-          build_command.empty?
-        else
-          false
-        end
+      # 这个设计的真巧妙, 如果通过 opts 设定为 false, 第一次 build 是会跳过
+
+      @should_build ||= build_command.empty?
     end
 
     def merge!(other : self) : Nil
