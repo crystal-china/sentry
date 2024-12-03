@@ -13,26 +13,26 @@ end
 if shard_yml && (targets = shard_yml["targets"]?)
   # use targets[<shard_name>]["main"] if exists
   if name && (main_path = targets.dig?(name, "main"))
-    binary_name = name
-    src_path = main_path
+    run_command = "./bin/#{name.as_s}"
+    src_path = main_path.as_s
   elsif (raw = targets.raw) && raw.is_a?(Hash)
     # otherwise, use the first key you find targets[<first_key>]["main"]
     if (first_key = raw.keys[0]?) && (main_path = targets.dig?(first_key, "main"))
-      binary_name = first_key
-      src_path = main_path
+      run_command = "./bin/#{first_key.as_s}"
+      src_path = main_path.as_s
     end
   end
 end
 
-if name.nil? || binary_name.nil? || src_path.nil?
+if name.nil? || run_command.nil? || src_path.nil?
   puts "🤖  Sentry error: please set the entry path for the main crystal file use \
  --src or create a valid shard.yml"
   exit 1
 end
 
 cli_config = Sentry::Config.new
-cli_config.src_path = src_path.as_s
-cli_config.run_command = "./bin/#{binary_name.as_s}"
+cli_config.src_path = src_path
+cli_config.run_command = run_command
 
 cli_config_file_name = ".sentry.yml"
 
