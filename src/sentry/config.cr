@@ -22,7 +22,7 @@ module Sentry
     property build_args_str : String { "build #{src_path} -o #{run_command}" }
     getter build_args : Array(String) { build_args_str.strip.split(" ").reject(&.empty?) }
 
-    getter run_command : String { "./bin/#{self.class.shard_name}" }
+    getter run_command : String? { self.class.shard_name ? "./bin/#{self.class.shard_name}" : "bin/app" }
     property run_args_str : String = ""
     getter run_args : Array(String) { run_args_str.strip.split(" ").reject(&.empty?) }
 
@@ -45,7 +45,7 @@ module Sentry
       @build_command = new_command
     end
 
-    def run_command=(new_command : String)
+    def run_command=(new_command : String?)
       @sets_run_command = true
       @run_command = new_command
     end

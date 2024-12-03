@@ -24,13 +24,14 @@ if shard_yml && (targets = shard_yml["targets"]?)
   end
 end
 
+cli_config = Sentry::Config.new
+
 if name.nil? || run_command.nil? || src_path.nil?
   puts "🤖  Sentry error: please set the entry path for the main crystal file use \
- --src or create a valid shard.yml"
+  --src or create a valid shard.yml"
   exit 1
 end
 
-cli_config = Sentry::Config.new
 cli_config.src_path = src_path
 cli_config.run_command = run_command
 
