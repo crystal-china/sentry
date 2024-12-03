@@ -19,12 +19,10 @@ module Sentry
     property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
 
     getter build_command : String = "crystal"
-    property build_args_str : String { "build #{src_path} -o #{run_command}" }
-    getter build_args : Array(String) { build_args_str.strip.split(" ").reject(&.empty?) }
+    setter build_args_str : String?
 
     getter run_command : String? { self.class.shard_name ? "./bin/#{self.class.shard_name}" : "bin/app" }
     property run_args_str : String = ""
-    getter run_args : Array(String) { run_args_str.strip.split(" ").reject(&.empty?) }
 
     property? should_install_shards : Bool = false
     property? colorize : Bool = true
@@ -45,9 +43,21 @@ module Sentry
       @build_command = new_command
     end
 
+    def build_args_str
+      @build_args_str = "build #{src_path} -o #{run_command}"
+    end
+
+    def build_args
+      build_args_str.strip.split(" ").reject(&.empty?)
+    end
+
     def run_command=(new_command : String?)
       @sets_run_command = true
       @run_command = new_command
+    end
+
+    def run_args
+      run_args_str.strip.split(" ").reject(&.empty?)
     end
 
     def merge!(other : self) : Nil

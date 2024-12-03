@@ -49,7 +49,7 @@ OptionParser.parse do |parser|
   parser.on(
     "--src=PATH",
     "Sets the entry path for the main crystal file (default inferred from shard.yml, \
-it is #{cli_config.src_path})"
+it is '#{cli_config.src_path}')"
   ) do |opt|
     cli_config.src_path = opt
   end
@@ -147,6 +147,13 @@ else
   config_yaml = ""
 end
 
+if cli_config.src_path.nil?
+  puts "🤖  Sentry error: please set the entry path for the main crystal file use \
+  --src or create a valid shard.yml"
+
+  exit 1
+end
+
 config = Sentry::Config.from_yaml(config_yaml)
 
 config.merge!(cli_config)
@@ -159,23 +166,16 @@ if config.info?
   end
 end
 
-if cli_config.src_path.nil?
-  puts "🤖  Sentry error: please set the entry path for the main crystal file use \
-  --src or create a valid shard.yml"
+process_runner = Sentry::ProcessRunner.new(
+  display_name: config.display_name,
+  build_command: config.build_command,
+  run_command: config.run_command,
+  build_args: config.build_args,
+  run_args: config.run_args,
+  should_build: config.should_build?,
+  files: config.watch,
+  should_install_shards: config.should_install_shards?,
+  colorize: config.colorize?
+)
 
-  exit 1
-else
-  process_runner = Sentry::ProcessRunner.new(
-    display_name: config.display_name,
-    build_command: config.build_command,
-    run_command: config.run_command,
-    build_args: config.build_args,
-    run_args: config.run_args,
-    should_build: config.should_build?,
-    files: config.watch,
-    should_install_shards: config.should_install_shards?,
-    colorize: config.colorize?
-  )
-
-  process_runner.run
-end
+process_runner.run
