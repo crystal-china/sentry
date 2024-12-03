@@ -12,7 +12,6 @@ module Sentry
     property? sets_build_command : Bool = false
     @[YAML::Field(ignore: true)]
     property? sets_run_command : Bool = false
-    @[YAML::Field(ignore: true)]
 
     getter display_name : String { self.class.shard_name.to_s }
     property src_path : String?
