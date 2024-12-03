@@ -27,13 +27,12 @@ end
 cli_config = Sentry::Config.new
 
 if name.nil? || run_command.nil? || src_path.nil?
-  puts "🤖  Sentry error: please set the entry path for the main crystal file use \
-  --src or create a valid shard.yml"
-  exit 1
+  cli_config.src_path = nil
+  cli_config.run_command = nil
+else
+  cli_config.src_path = src_path
+  cli_config.run_command = run_command
 end
-
-cli_config.src_path = src_path
-cli_config.run_command = run_command
 
 cli_config_file_name = ".sentry.yml"
 
@@ -160,16 +159,23 @@ if config.info?
   end
 end
 
-process_runner = Sentry::ProcessRunner.new(
-  display_name: config.display_name,
-  build_command: config.build_command,
-  run_command: config.run_command,
-  build_args: config.build_args,
-  run_args: config.run_args,
-  should_build: config.should_build?,
-  files: config.watch,
-  should_install_shards: config.should_install_shards?,
-  colorize: config.colorize?
-)
+if cli_config.src_path.nil?
+  puts "🤖  Sentry error: please set the entry path for the main crystal file use \
+  --src or create a valid shard.yml"
 
-process_runner.run
+  exit 1
+else
+  process_runner = Sentry::ProcessRunner.new(
+    display_name: config.display_name,
+    build_command: config.build_command,
+    run_command: config.run_command,
+    build_args: config.build_args,
+    run_args: config.run_args,
+    should_build: config.should_build?,
+    files: config.watch,
+    should_install_shards: config.should_install_shards?,
+    colorize: config.colorize?
+  )
+
+  process_runner.run
+end
