@@ -141,17 +141,17 @@ default: #{cli_config.build_args_str}, will override --src flag)"
   end
 end
 
-if File.exists?(cli_config_file_name)
-  config_yaml = File.read(cli_config_file_name)
-else
-  config_yaml = ""
-end
-
 if cli_config.src_path.nil?
   puts "🤖  Sentry error: please set the entry path for the main crystal file use \
   --src or create a valid shard.yml"
 
   exit 1
+end
+
+if File.exists?(cli_config_file_name)
+  config_yaml = File.read(cli_config_file_name)
+else
+  config_yaml = ""
 end
 
 config = Sentry::Config.from_yaml(config_yaml)
