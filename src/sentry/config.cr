@@ -46,7 +46,7 @@ module Sentry
       @build_args_str = "build #{src_path} -o #{run_command}"
     end
 
-    def build_args
+    def build_args_list
       build_args_str.strip.split(" ").reject(&.empty?)
     end
 
@@ -55,7 +55,7 @@ module Sentry
       @run_command = new_command
     end
 
-    def run_args
+    def run_args_list
       run_args_str.strip.split(" ").reject(&.empty?)
     end
 
@@ -83,9 +83,9 @@ module Sentry
             shard name:              #{self.class.shard_name}
             src_path:                #{src_path}
             build_command:           #{build_command}
-            build_args:              #{build_args}
+            build_args:              #{build_args_list}
             run_command:             #{run_command}
-            run_args:                #{run_args}
+            run_args:                #{run_args_list}
             watched files:           #{watch}
             colorize:                #{colorize?}
             should install shards:   #{should_install_shards?}

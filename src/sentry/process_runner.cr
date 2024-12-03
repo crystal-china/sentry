@@ -11,8 +11,8 @@ module Sentry
       @display_name : String,
       @build_command : String,
       @run_command : String,
-      @build_args : Array(String) = [] of String,
-      @run_args : Array(String) = [] of String,
+      @build_args_list : Array(String) = [] of String,
+      @run_args_list : Array(String) = [] of String,
       @files = [] of String,
       @should_build = true,
       @should_install_shards = false,
@@ -138,7 +138,7 @@ module Sentry
 
       Process.run(
         @build_command,
-        @build_args,
+        @build_args_list,
         output: :inherit,
         error: :inherit
       )
@@ -157,7 +157,7 @@ module Sentry
 
       @app_process = Process.new(
         @run_command,
-        @run_args,
+        @run_args_list,
         output: :inherit,
         error: :inherit
       )
