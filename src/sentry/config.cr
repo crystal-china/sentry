@@ -3,7 +3,6 @@ module Sentry
     include YAML::Serializable
 
     @display_name : String?
-    @run_command : String?
 
     # `shard_name` is set as a class property so that it can be inferred from
     # the `shard.yml` in the project directory.
@@ -29,6 +28,7 @@ module Sentry
 
     setter build_args_str : String?
     property run_args_str : String = ""
+    getter run_command : String { "./bin/#{self.class.shard_name}" }
 
     # Initializing an empty configuration provides no default values.
     def initialize
@@ -54,10 +54,6 @@ module Sentry
 
     def build_args : Array(String)
       build_args_str.strip.split(" ").reject(&.empty?)
-    end
-
-    def run_command : String
-      @run_command ||= "./bin/#{self.class.shard_name}"
     end
 
     def run_command=(new_command : String)
