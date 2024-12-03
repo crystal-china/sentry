@@ -2,8 +2,6 @@ module Sentry
   class Config
     include YAML::Serializable
 
-    @display_name : String?
-
     # `shard_name` is set as a class property so that it can be inferred from
     # the `shard.yml` in the project directory.
     class_property shard_name : String?
@@ -25,10 +23,10 @@ module Sentry
     property? info : Bool = false
 
     getter build_command : String = "crystal"
-
-    setter build_args_str : String?
+    property build_args_str : String { "build #{src_path} -o #{run_command}" }
     property run_args_str : String = ""
     getter run_command : String { "./bin/#{self.class.shard_name}" }
+    getter display_name : String { self.class.shard_name.to_s }
 
     # Initializing an empty configuration provides no default values.
     def initialize
@@ -39,17 +37,9 @@ module Sentry
       @display_name = new_display_name
     end
 
-    def display_name! : String
-      display_name.not_nil!
-    end
-
     def build_command=(new_command : String)
       @sets_build_command = true
       @build_command = new_command
-    end
-
-    def build_args_str : String
-      @build_args_str ||= "build #{src_path} -o #{run_command}"
     end
 
     def build_args : Array(String)
@@ -75,7 +65,7 @@ module Sentry
     end
 
     def merge!(other : self) : Nil
-      self.display_name = other.display_name! if other.sets_display_name?
+      self.display_name = other.display_name if other.sets_display_name?
       self.build_command = other.build_command if other.sets_build_command?
       self.run_command = other.run_command if other.sets_run_command?
 
@@ -104,10 +94,6 @@ module Sentry
             watch:          #{watch}
             colorize:       #{colorize?}
       CONFIG
-    end
-
-    private def display_name : String?
-      @display_name ||= self.class.shard_name
     end
   end
 end

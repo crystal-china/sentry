@@ -157,7 +157,7 @@ if config.info?
 end
 
 process_runner = Sentry::ProcessRunner.new(
-  display_name: config.display_name!,
+  display_name: config.display_name,
   build_command: config.build_command,
   run_command: config.run_command,
   build_args: config.build_args,
