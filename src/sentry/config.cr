@@ -29,6 +29,9 @@ module Sentry
     property? info : Bool = false
     property? should_build : Bool { !build_command.blank? }
 
+    getter build_args : Array(String) { build_args_str.strip.split(" ").reject(&.empty?) }
+    getter run_args : Array(String) { run_args_str.strip.split(" ").reject(&.empty?) }
+
     # Initializing an empty configuration provides no default values.
     def initialize
     end
@@ -43,17 +46,9 @@ module Sentry
       @build_command = new_command
     end
 
-    def build_args : Array(String)
-      build_args_str.strip.split(" ").reject(&.empty?)
-    end
-
     def run_command=(new_command : String)
       @sets_run_command = true
       @run_command = new_command
-    end
-
-    def run_args : Array(String)
-      @run_args_str.strip.split(" ").reject(&.empty?)
     end
 
     def merge!(other : self) : Nil
