@@ -69,6 +69,8 @@ module Sentry
       self.build_args_str = other.build_args_str unless other.build_args_str.empty?
       self.run_args_str = other.run_args_str unless other.run_args_str.empty?
 
+      self.should_build = other.should_build?
+
       self.info = other.info? if other.info?
       self.watch = other.watch unless other.watch.empty?
       self.should_install_shards = other.should_install_shards?
@@ -79,17 +81,18 @@ module Sentry
     def to_s(io : IO)
       io << <<-CONFIG
       🤖  Sentry configuration:
-            display name:   #{display_name}
-            shard name:     #{self.class.shard_name}
-            install shards: #{should_install_shards?}
-            info:           #{info?}
-            build_command:  #{build_command}
-            build_args:     #{build_args}
-            src_path:       #{src_path}
-            run_command:    #{run_command}
-            run_args:       #{run_args}
-            watch:          #{watch}
-            colorize:       #{colorize?}
+            display name:            #{display_name}
+            shard name:              #{self.class.shard_name}
+            src_path:                #{src_path}
+            build_command:           #{build_command}
+            build_args:              #{build_args}
+            run_command:             #{run_command}
+            run_args:                #{run_args}
+            watched files:           #{watch}
+            colorize:                #{colorize?}
+            should install shards:   #{should_install_shards?}
+            should build:            #{should_build?}
+            should print info:       #{info?}
       CONFIG
     end
   end
