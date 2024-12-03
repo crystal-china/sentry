@@ -56,6 +56,7 @@ module Sentry
     end
 
     def should_build? : Bool
+      # 这个设计的真巧妙
       @should_build ||=
         if (build_command = @build_command)
           build_command.empty?
