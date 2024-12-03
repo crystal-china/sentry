@@ -12,13 +12,15 @@ module Sentry
     property? sets_build_command : Bool = false
     @[YAML::Field(ignore: true)]
     property? sets_run_command : Bool = false
+    @[YAML::Field(ignore: true)]
+    property? sets_build_args : Bool = false
 
     getter display_name : String { self.class.shard_name.to_s }
     property src_path : String?
     property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
 
     getter build_command : String = "crystal"
-    setter build_args : String?
+    @build_args : String?
 
     getter run_command : String? { self.class.shard_name ? "./bin/#{self.class.shard_name}" : "bin/app" }
     property run_args : String = ""
@@ -42,11 +44,16 @@ module Sentry
       @build_command = new_command
     end
 
-    def build_args
-      @build_args = "build #{src_path} -o #{run_command}"
+    def build_args=(new_build_args : String)
+      @sets_build_args = true
+      @build_args = new_build_args
     end
 
-    def build_args_list
+    def build_args : String?
+      @build_args ||= "build #{src_path} -o #{run_command}"
+    end
+
+    def build_args_list : Array(String)
       build_args.strip.split(" ").reject(&.empty?)
     end
 
@@ -55,25 +62,25 @@ module Sentry
       @run_command = new_command
     end
 
-    def run_args_list
+    def run_args_list : Array(String)
       run_args.strip.split(" ").reject(&.empty?)
     end
 
-    def merge!(other : self) : Nil
-      self.display_name = other.display_name if other.sets_display_name?
-      self.build_command = other.build_command if other.sets_build_command?
-      self.run_command = other.run_command if other.sets_run_command?
+    def merge!(cli_config : self) : Nil
+      self.display_name = cli_config.display_name if cli_config.sets_display_name?
+      self.build_command = cli_config.build_command if cli_config.sets_build_command?
+      self.run_command = cli_config.run_command if cli_config.sets_run_command?
 
-      self.build_args = other.build_args unless other.build_args.empty?
-      self.run_args = other.run_args unless other.run_args.empty?
+      self.build_args = cli_config.build_args if cli_config.sets_build_args?
+      self.run_args = cli_config.run_args unless cli_config.run_args.empty?
 
-      self.should_build = other.should_build?
+      self.should_build = cli_config.should_build?
 
-      self.info = other.info? if other.info?
-      self.watch = other.watch unless other.watch.empty?
-      self.should_install_shards = other.should_install_shards?
-      self.colorize = other.colorize?
-      self.src_path = other.src_path
+      self.info = cli_config.info? if cli_config.info?
+      self.watch = cli_config.watch unless cli_config.watch.empty?
+      self.should_install_shards = cli_config.should_install_shards?
+      self.colorize = cli_config.colorize?
+      self.src_path = cli_config.src_path
     end
 
     def to_s(io : IO)
@@ -83,9 +90,9 @@ module Sentry
             shard name:              #{self.class.shard_name}
             src_path:                #{src_path}
             build_command:           #{build_command}
-            build_args:              #{build_args_list}
+            build_args:              #{build_args}
             run_command:             #{run_command}
-            run_args:                #{run_args_list}
+            run_args:                #{run_args}
             watched files:           #{watch}
             colorize:                #{colorize?}
             should install shards:   #{should_install_shards?}

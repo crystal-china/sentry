@@ -34,6 +34,8 @@ else
   cli_config.run_command = run_command
 end
 
+cli_config.sets_run_command = false
+
 cli_config_file_name = ".sentry.yml"
 
 OptionParser.parse do |parser|
