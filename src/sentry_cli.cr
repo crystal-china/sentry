@@ -25,7 +25,8 @@ if shard_yml && (targets = shard_yml["targets"]?)
 end
 
 if name.nil? || binary_name.nil? || src_path.nil?
-  puts "🤖  Sentry error: please set the entry path for the main crystal file use --src or create a valid shard.yml"
+  puts "🤖  Sentry error: please set the entry path for the main crystal file use \
+ --src or create a valid shard.yml"
   exit 1
 end
 
@@ -40,14 +41,15 @@ OptionParser.parse do |parser|
   parser.on(
     "-n NAME",
     "--name=NAME",
-    "Sets the display name of the app process (default name: #{Sentry::Config.shard_name})"
+    "Sets the display name of the app process  (default: #{cli_config.display_name})"
   ) do |opt|
     cli_config.display_name = opt
   end
 
   parser.on(
     "--src=PATH",
-    "Sets the entry path for the main crystal file (default inferred from shard.yml, it is #{cli_config.src_path})"
+    "Sets the entry path for the main crystal file (default inferred from shard.yml, \
+it is #{cli_config.src_path})"
   ) do |opt|
     cli_config.src_path = opt
   end
@@ -62,7 +64,8 @@ OptionParser.parse do |parser|
 
   parser.on(
     "--build-args=ARGS",
-    "Specifies arguments for the build command, (default: #{cli_config.build_args_str}, will override --src flag)"
+    "Specifies arguments for the build command, (\
+default: #{cli_config.build_args_str}, will override --src flag)"
   ) do |args|
     cli_config.build_args_str = args
   end
@@ -100,7 +103,7 @@ OptionParser.parse do |parser|
   parser.on(
     "-c FILE",
     "--config=FILE",
-    "Specifies a file to load for automatic configuration (default: '.sentry.yml')"
+    "Specifies a file to load for automatic configuration (default: #{cli_config_file_name})"
   ) do |opt|
     cli_config_file_name = opt
   end

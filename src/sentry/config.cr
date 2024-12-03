@@ -20,17 +20,16 @@ module Sentry
 
     getter build_command : String = "crystal"
     property build_args_str : String { "build #{src_path} -o #{run_command}" }
+    getter build_args : Array(String) { build_args_str.strip.split(" ").reject(&.empty?) }
 
-    property run_args_str : String = ""
     getter run_command : String { "./bin/#{self.class.shard_name}" }
+    property run_args_str : String = ""
+    getter run_args : Array(String) { run_args_str.strip.split(" ").reject(&.empty?) }
 
     property? should_install_shards : Bool = false
     property? colorize : Bool = true
     property? info : Bool = false
     property? should_build : Bool { !build_command.blank? }
-
-    getter build_args : Array(String) { build_args_str.strip.split(" ").reject(&.empty?) }
-    getter run_args : Array(String) { run_args_str.strip.split(" ").reject(&.empty?) }
 
     # Initializing an empty configuration provides no default values.
     def initialize
