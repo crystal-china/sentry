@@ -26,7 +26,7 @@ module Sentry
     property? colorize : Bool = true
     property? info : Bool = false
 
-    property build_args_str : String = ""
+    setter build_args_str : String?
     property run_args_str : String = ""
 
     # Initializing an empty configuration provides no default values.
@@ -51,8 +51,12 @@ module Sentry
       @build_command = new_command
     end
 
+    def build_args_str : String
+      @build_args_str ||= "build #{src_path} -o #{run_command}"
+    end
+
     def build_args : Array(String)
-      @build_args_str.strip.split(" ").reject(&.empty?)
+      build_args_str.strip.split(" ").reject(&.empty?)
     end
 
     def run_command : String

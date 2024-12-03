@@ -9,29 +9,31 @@ begin
 rescue e
 end
 
-cli_config = Sentry::Config.new
-cli_config_file_name = ".sentry.yml"
-
 # Set the default entry src path and build output binary name from shard.yml
 if shard_yml && (targets = shard_yml["targets"]?)
   # use targets[<shard_name>]["main"] if exists
   if name && (main_path = targets.dig?(name, "main"))
-    shard_build_output_binary_name = name.as_s
-    cli_config.src_path = main_path.as_s
+    binary_name = name
+    src_path = main_path
   elsif (raw = targets.raw) && raw.is_a?(Hash)
     # otherwise, use the first key you find targets[<first_key>]["main"]
     if (first_key = raw.keys[0]?) && (main_path = targets.dig?(first_key, "main"))
-      shard_build_output_binary_name = first_key.as_s
-      cli_config.src_path = main_path.as_s
+      binary_name = first_key
+      src_path = main_path
     end
   end
 end
 
-if shard_build_output_binary_name
-  run_command = "./bin/#{shard_build_output_binary_name}"
-  cli_config.run_command = run_command
-  cli_config.build_args_str = "build #{cli_config.src_path} -o #{run_command}"
+if name.nil? || binary_name.nil? || src_path.nil?
+  puts "🤖  Sentry error: please set the entry path for the main crystal file use --src or create a valid shard.yml"
+  exit 1
 end
+
+cli_config = Sentry::Config.new
+cli_config.src_path = src_path.as_s
+cli_config.run_command = "./bin/#{binary_name.as_s}"
+
+cli_config_file_name = ".sentry.yml"
 
 OptionParser.parse do |parser|
   parser.banner = "Usage: ./sentry [options]"
@@ -45,7 +47,7 @@ OptionParser.parse do |parser|
 
   parser.on(
     "--src=PATH",
-    "Sets the entry path for the main crystal file (default inferred from shard.yml)"
+    "Sets the entry path for the main crystal file (default inferred from shard.yml, it is #{cli_config.src_path})"
   ) do |opt|
     cli_config.src_path = opt
   end
@@ -53,14 +55,14 @@ OptionParser.parse do |parser|
   parser.on(
     "-b COMMAND",
     "--build=COMMAND",
-    "Overrides the default build command (default name: crystal, will override --src flag)"
+    "Overrides the default build command (default: #{cli_config.build_command})"
   ) do |command|
     cli_config.build_command = command
   end
 
   parser.on(
     "--build-args=ARGS",
-    "Specifies arguments for the build command, (default: #{cli_config.build_args_str})"
+    "Specifies arguments for the build command, (default: #{cli_config.build_args_str}, will override --src flag)"
   ) do |args|
     cli_config.build_args_str = args
   end
@@ -75,14 +77,14 @@ OptionParser.parse do |parser|
   parser.on(
     "-r COMMAND",
     "--run=COMMAND",
-    "Overrides the default run command, (default: #{run_command})"
+    "Overrides the default run command, (default: #{cli_config.run_command})"
   ) do |opt|
     cli_config.run_command = opt
   end
 
   parser.on(
     "--run-args=ARGS",
-    "Specifies arguments for the run command, (default: )"
+    "Specifies arguments for the run command, (default: #{cli_config.run_args_str})"
   ) do |opt|
     cli_config.run_args_str = opt
   end
@@ -91,8 +93,8 @@ OptionParser.parse do |parser|
     "-w FILE",
     "--watch=FILE",
     "Appends to default list of watched files, (default: #{cli_config.watch})"
-  ) do |opt|
-    cli_config.watch << opt
+  ) do |file|
+    cli_config.watch << file
   end
 
   parser.on(
@@ -143,6 +145,7 @@ else
 end
 
 config = Sentry::Config.from_yaml(config_yaml)
+
 config.merge!(cli_config)
 
 if config.info?
@@ -153,21 +156,16 @@ if config.info?
   end
 end
 
-if Sentry::Config.shard_name
-  process_runner = Sentry::ProcessRunner.new(
-    display_name: config.display_name!,
-    build_command: config.build_command,
-    run_command: config.run_command,
-    build_args: config.build_args,
-    run_args: config.run_args,
-    should_build: config.should_build?,
-    files: config.watch,
-    should_install_shards: config.should_install_shards?,
-    colorize: config.colorize?
-  )
+process_runner = Sentry::ProcessRunner.new(
+  display_name: config.display_name!,
+  build_command: config.build_command,
+  run_command: config.run_command,
+  build_args: config.build_args,
+  run_args: config.run_args,
+  should_build: config.should_build?,
+  files: config.watch,
+  should_install_shards: config.should_install_shards?,
+  colorize: config.colorize?
+)
 
-  process_runner.run
-else
-  puts "🤖  Sentry error: please set the entry path for the main crystal file"
-  exit 1
-end
+process_runner.run
