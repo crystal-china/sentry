@@ -13,20 +13,21 @@ module Sentry
     @[YAML::Field(ignore: true)]
     property? sets_run_command : Bool = false
     @[YAML::Field(ignore: true)]
-    setter should_build : Bool = true
 
+    getter display_name : String { self.class.shard_name.to_s }
     property src_path : String?
     property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
+
+    getter build_command : String = "crystal"
+    property build_args_str : String { "build #{src_path} -o #{run_command}" }
+
+    property run_args_str : String = ""
+    getter run_command : String { "./bin/#{self.class.shard_name}" }
 
     property? should_install_shards : Bool = false
     property? colorize : Bool = true
     property? info : Bool = false
-
-    getter build_command : String = "crystal"
-    property build_args_str : String { "build #{src_path} -o #{run_command}" }
-    property run_args_str : String = ""
-    getter run_command : String { "./bin/#{self.class.shard_name}" }
-    getter display_name : String { self.class.shard_name.to_s }
+    property? should_build : Bool { !build_command.blank? }
 
     # Initializing an empty configuration provides no default values.
     def initialize
@@ -53,12 +54,6 @@ module Sentry
 
     def run_args : Array(String)
       @run_args_str.strip.split(" ").reject(&.empty?)
-    end
-
-    def should_build? : Bool
-      # 这个设计的真巧妙, 如果通过 opts 设定为 false, 第一次 build 是会跳过
-
-      @should_build ||= build_command.empty?
     end
 
     def merge!(other : self) : Nil
