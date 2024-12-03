@@ -3,7 +3,6 @@ module Sentry
     include YAML::Serializable
 
     @display_name : String?
-    @build_command : String?
     @run_command : String?
 
     # `shard_name` is set as a class property so that it can be inferred from
@@ -26,6 +25,8 @@ module Sentry
     property? colorize : Bool = true
     property? info : Bool = false
 
+    getter build_command : String = "crystal"
+
     setter build_args_str : String?
     property run_args_str : String = ""
 
@@ -40,10 +41,6 @@ module Sentry
 
     def display_name! : String
       display_name.not_nil!
-    end
-
-    def build_command : String
-      @build_command ||= "crystal"
     end
 
     def build_command=(new_command : String)
