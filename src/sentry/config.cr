@@ -18,10 +18,10 @@ module Sentry
     property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
 
     getter build_command : String = "crystal"
-    setter build_args_str : String?
+    setter build_args : String?
 
     getter run_command : String? { self.class.shard_name ? "./bin/#{self.class.shard_name}" : "bin/app" }
-    property run_args_str : String = ""
+    property run_args : String = ""
 
     property? should_install_shards : Bool = false
     property? colorize : Bool = true
@@ -42,12 +42,12 @@ module Sentry
       @build_command = new_command
     end
 
-    def build_args_str
-      @build_args_str = "build #{src_path} -o #{run_command}"
+    def build_args
+      @build_args = "build #{src_path} -o #{run_command}"
     end
 
     def build_args_list
-      build_args_str.strip.split(" ").reject(&.empty?)
+      build_args.strip.split(" ").reject(&.empty?)
     end
 
     def run_command=(new_command : String?)
@@ -56,7 +56,7 @@ module Sentry
     end
 
     def run_args_list
-      run_args_str.strip.split(" ").reject(&.empty?)
+      run_args.strip.split(" ").reject(&.empty?)
     end
 
     def merge!(other : self) : Nil
@@ -64,8 +64,8 @@ module Sentry
       self.build_command = other.build_command if other.sets_build_command?
       self.run_command = other.run_command if other.sets_run_command?
 
-      self.build_args_str = other.build_args_str unless other.build_args_str.empty?
-      self.run_args_str = other.run_args_str unless other.run_args_str.empty?
+      self.build_args = other.build_args unless other.build_args.empty?
+      self.run_args = other.run_args unless other.run_args.empty?
 
       self.should_build = other.should_build?
 

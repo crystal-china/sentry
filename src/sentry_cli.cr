@@ -65,9 +65,9 @@ it is '#{cli_config.src_path}')"
   parser.on(
     "--build-args=ARGS",
     "Specifies arguments for the build command, (\
-default: #{cli_config.build_args_str}, will override --src flag)"
+default: #{cli_config.build_args}, will override --src flag)"
   ) do |args|
-    cli_config.build_args_str = args
+    cli_config.build_args = args
   end
 
   parser.on(
@@ -87,9 +87,9 @@ default: #{cli_config.build_args_str}, will override --src flag)"
 
   parser.on(
     "--run-args=ARGS",
-    "Specifies arguments for the run command, (default: #{cli_config.run_args_str})"
+    "Specifies arguments for the run command, (default: #{cli_config.run_args})"
   ) do |opt|
-    cli_config.run_args_str = opt
+    cli_config.run_args = opt
   end
 
   parser.on(
