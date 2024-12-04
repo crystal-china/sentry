@@ -31,6 +31,8 @@ run_command: ./bin/sentry
 # Any additional arguments to pass to the run command.
 run_args: -p 3288
 
+run_shards_install: true
+
 # The list of patterns of files for sentry to watch.
 watch:
   - ./src/**/*.cr

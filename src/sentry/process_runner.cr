@@ -15,7 +15,7 @@ module Sentry
       @run_args_list : Array(String) = [] of String,
       @files = [] of String,
       @should_build = true,
-      @should_install_shards = false,
+      @run_shards_install = false,
       @should_play_audio = true,
       @colorize = true
     )
@@ -34,7 +34,7 @@ module Sentry
     def run : Nil
       stdout "🤖  Your SentryBot is vigilant. beep-boop..."
 
-      run_install_shards if @should_install_shards
+      run_shards_install if @run_shards_install
 
       loop do
         if @should_kill
@@ -49,7 +49,7 @@ module Sentry
       end
     end
 
-    private def run_install_shards : Nil
+    private def run_shards_install : Nil
       stdout "🤖  Installing shards..."
 
       install_result = Process.run(

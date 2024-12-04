@@ -44,7 +44,7 @@ module Sentry
 
     property? info : Bool = false
 
-    property? should_install_shards : Bool = false
+    property? run_shards_install : Bool = false
 
     # Initializing an empty configuration provides no default values.
     def initialize
@@ -116,25 +116,25 @@ module Sentry
 
       # following properties default value is false in cli_config, so it's work.
       self.info = cli_config.info? if cli_config.info?
-      self.should_install_shards = cli_config.should_install_shards? if cli_config.should_install_shards?
+      self.run_shards_install = cli_config.run_shards_install? if cli_config.run_shards_install?
     end
 
     def to_s(io : IO)
       io << <<-CONFIG
       🤖  Sentry configuration:
-            display name:            #{display_name}
-            shard name:              #{self.class.shard_name}
-            src_path:                #{src_path}
-            build_command:           #{build_command}
-            build_args:              #{build_args}
-            run_command:             #{run_command}
-            run_args:                #{run_args}
-            watched files:           #{watch}
-            colorize:                #{colorize?}
-            should install shards:   #{should_install_shards?}
-            should play audio:       #{should_play_audio?}
-            should build:            #{should_build?}
-            should print info:       #{info?}
+            display name:           #{display_name}
+            shard name:             #{self.class.shard_name}
+            src_path:               #{src_path}
+            build_command:          #{build_command}
+            build_args:             #{build_args}
+            run_command:            #{run_command}
+            run_args:               #{run_args}
+            watched files:          #{watch}
+            colorize:               #{colorize?}
+            run shards install:     #{run_shards_install?}
+            should play audio:      #{should_play_audio?}
+            should build:           #{should_build?}
+            should print info:      #{info?}
       CONFIG
     end
   end

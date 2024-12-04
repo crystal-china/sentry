@@ -115,7 +115,7 @@ default: #{cli_config.src_path})"
     "--install",
     "Run `shards install' once before running Sentry build and run commands"
   ) do
-    cli_config.should_install_shards = true
+    cli_config.run_shards_install = true
   end
 
   parser.on(
@@ -190,7 +190,7 @@ process_runner = Sentry::ProcessRunner.new(
   run_args_list: config.run_args_list,
   should_build: config.should_build?,
   files: config.watch,
-  should_install_shards: config.should_install_shards?,
+  run_shards_install: config.run_shards_install?,
   should_play_audio: config.should_play_audio?,
   colorize: config.colorize?
 )
