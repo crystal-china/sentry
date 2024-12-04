@@ -16,6 +16,7 @@ module Sentry
       @files = [] of String,
       @should_build = true,
       @should_install_shards = false,
+      @should_play_sound = true,
       @colorize = true
     )
       @should_kill = false
@@ -26,7 +27,7 @@ module Sentry
       end
 
       {% if flag?(:linux) %}
-        @sound_player = `which aplay 2>/dev/null`.chomp
+        @sound_player = `which aplay 2>/dev/null`.chomp if @should_play_sound
       {% end %}
     end
 

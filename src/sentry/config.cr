@@ -25,10 +25,11 @@ module Sentry
     getter run_command : String? { self.class.shard_name ? "./bin/#{self.class.shard_name}" : "bin/app" }
     property run_args : String = ""
 
-    property? should_install_shards : Bool = false
     property? colorize : Bool = true
     property? info : Bool = false
+    property? should_install_shards : Bool = false
     property? should_build : Bool { !build_command.blank? }
+    property? should_play_sound : Bool = true
 
     # Initializing an empty configuration provides no default values.
     def initialize
@@ -82,6 +83,7 @@ module Sentry
       self.should_build = cli_config.should_build?
       self.colorize = cli_config.colorize?
       self.src_path = cli_config.src_path
+      self.should_play_sound = cli_config.should_play_sound?
       self.should_install_shards = cli_config.should_install_shards?
     end
 
@@ -98,6 +100,7 @@ module Sentry
             watched files:           #{watch}
             colorize:                #{colorize?}
             should install shards:   #{should_install_shards?}
+            should play sound:       #{should_play_sound?}
             should build:            #{should_build?}
             should print info:       #{info?}
       CONFIG
