@@ -18,22 +18,24 @@ module Sentry
     property? sets_should_play_audio : Bool = false
     @[YAML::Field(ignore: true)]
     property? sets_should_build : Bool = false
+    @[YAML::Field(ignore: true)]
+    property? sets_colorize : Bool = false
 
     getter display_name : String { self.class.shard_name.to_s }
     property src_path : String?
     property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
 
     getter build_command : String = "crystal"
-    @build_args : String?
     getter build_args : String? { "build #{src_path} -o #{run_command}" }
 
     getter run_command : String? { self.class.shard_name ? "./bin/#{self.class.shard_name}" : "bin/app" }
     property run_args : String = ""
 
-    property? colorize : Bool = true
+    getter? colorize : Bool = true
+
     property? info : Bool = false
     property? should_install_shards : Bool = false
-    property? should_build : Bool { !build_command.blank? }
+    getter? should_build : Bool { !build_command.blank? }
 
     @[YAML::Field(key: "play_audio")]
     getter? should_play_audio : Bool = true
@@ -77,6 +79,11 @@ module Sentry
       @should_build = new
     end
 
+    def colorize=(new : Bool)
+      @sets_colorize = true
+      @colorize = new
+    end
+
     def run_args_list : Array(String)
       run_args.strip.split(" ").reject(&.empty?)
     end
@@ -94,8 +101,7 @@ module Sentry
       self.should_play_audio = cli_config.should_play_audio? if cli_config.sets_should_play_audio?
 
       # following always use default
-
-      self.colorize = cli_config.colorize?
+      self.colorize = cli_config.colorize? if cli_config.sets_colorize?
       self.src_path = cli_config.src_path
 
       # following properties default value is false in cli_config, so it's work.
