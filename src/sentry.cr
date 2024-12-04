@@ -1,7 +1,7 @@
 require "yaml"
 require "colorize"
 require "./sentry/config"
-require "./sound_file_storage"
+require "./sentry/sound_file_storage"
 require "./sentry/process_runner.cr"
 
 module Sentry
