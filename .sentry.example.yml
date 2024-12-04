@@ -8,25 +8,24 @@
 
 # The name of your application when displayed in log output. By default, this
 # is the app name specified in `shard.yml`.
-display_name: my-program-name
+display_name: sentry
 
 # Set this to `true` to show configuration information when starting Sentry.
 info: true
 
-# The command used to compile the application. Setting this option to `nil` or
-# an empty string will act like specifying `--no-build` on the command line.
-build: crystal build ./src/sentry_cli.cr -o ./my-program-name
+play_audio: false
 
-# Any additional arguments to pass to the build command. Build args may only
-# be given if the build command is a single argument.
-build_args:
+# The command used to compile the application, e.g. crystal
+build_command: crystal
+
+# Any additional arguments to pass to the build command.
+build_args: build ./src/sentry_cli.cr -o ./bin/sentry
 
 # The command used to run the compiled application.
-run: ./my-program-name
+run_command: ./bin/sentry
 
-# Any additional arguments to pass to the run command. Run args may only be
-# given if the run command is a single argument.
-run_args:
+# Any additional arguments to pass to the run command.
+run_args: -p 3288
 
 # The list of patterns of files for sentry to watch.
 watch:

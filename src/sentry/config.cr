@@ -14,6 +14,8 @@ module Sentry
     property? sets_run_command : Bool = false
     @[YAML::Field(ignore: true)]
     property? sets_build_args : Bool = false
+    @[YAML::Field(ignore: true)]
+    property? sets_should_play_audio : Bool = false
 
     getter display_name : String { self.class.shard_name.to_s }
     property src_path : String?
@@ -21,6 +23,7 @@ module Sentry
 
     getter build_command : String = "crystal"
     @build_args : String?
+    getter build_args : String? { "build #{src_path} -o #{run_command}" }
 
     getter run_command : String? { self.class.shard_name ? "./bin/#{self.class.shard_name}" : "bin/app" }
     property run_args : String = ""
@@ -29,39 +32,42 @@ module Sentry
     property? info : Bool = false
     property? should_install_shards : Bool = false
     property? should_build : Bool { !build_command.blank? }
-    property? should_play_audio : Bool = true
+
+    @[YAML::Field(key: "play_audio")]
+    getter? should_play_audio : Bool = true
 
     # Initializing an empty configuration provides no default values.
     def initialize
       @watch = [] of String
     end
 
-    def display_name=(new_display_name : String)
+    def display_name=(new : String)
       @sets_display_name = true
-      @display_name = new_display_name
+      @display_name = new
     end
 
-    def build_command=(new_command : String)
+    def build_command=(new : String)
       @sets_build_command = true
-      @build_command = new_command
+      @build_command = new
     end
 
-    def build_args=(new_build_args : String)
+    def build_args=(new : String)
       @sets_build_args = true
-      @build_args = new_build_args
-    end
-
-    def build_args : String?
-      @build_args ||= "build #{src_path} -o #{run_command}"
+      @build_args = new
     end
 
     def build_args_list : Array(String)
       build_args.strip.split(" ").reject(&.empty?)
     end
 
-    def run_command=(new_command : String?)
+    def run_command=(new : String?)
       @sets_run_command = true
-      @run_command = new_command
+      @run_command = new
+    end
+
+    def should_play_audio=(new : Bool)
+      @sets_should_play_audio = true
+      @should_play_audio = new
     end
 
     def run_args_list : Array(String)
@@ -76,15 +82,17 @@ module Sentry
       self.build_args = cli_config.build_args if cli_config.sets_build_args?
       self.run_args = cli_config.run_args unless cli_config.run_args.empty?
 
-      self.info = cli_config.info? if cli_config.info?
       self.watch = cli_config.watch unless cli_config.watch.empty?
+      self.should_play_audio = cli_config.should_play_audio? if cli_config.sets_should_play_audio?
 
       # following always use default
       self.should_build = cli_config.should_build?
       self.colorize = cli_config.colorize?
       self.src_path = cli_config.src_path
-      self.should_play_audio = cli_config.should_play_audio?
-      self.should_install_shards = cli_config.should_install_shards?
+
+      # following properties default value is false in cli_config, so it's work.
+      self.info = cli_config.info? if cli_config.info?
+      self.should_install_shards = cli_config.should_install_shards? if cli_config.should_install_shards?
     end
 
     def to_s(io : IO)
