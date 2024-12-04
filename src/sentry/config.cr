@@ -23,9 +23,9 @@ module Sentry
     @[YAML::Field(ignore: true)]
     property? sets_watch : Bool = false
 
-    getter display_name : String { self.class.shard_name.to_s }
     property src_path : String?
-    getter watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
+
+    getter display_name : String { self.class.shard_name.to_s }
 
     getter build_command : String = "crystal"
     getter build_args : String? { "build #{src_path} -o #{run_command}" }
@@ -33,14 +33,18 @@ module Sentry
     getter run_command : String? { self.class.shard_name ? "./bin/#{self.class.shard_name}" : "bin/app" }
     property run_args : String = ""
 
-    getter? colorize : Bool = true
-
-    property? info : Bool = false
-    property? should_install_shards : Bool = false
     getter? should_build : Bool { !build_command.blank? }
 
     @[YAML::Field(key: "play_audio")]
     getter? should_play_audio : Bool = true
+
+    getter watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
+
+    getter? colorize : Bool = true
+
+    property? info : Bool = false
+
+    property? should_install_shards : Bool = false
 
     # Initializing an empty configuration provides no default values.
     def initialize
@@ -95,20 +99,20 @@ module Sentry
     end
 
     def merge!(cli_config : self) : Nil
-      self.display_name = cli_config.display_name if cli_config.sets_display_name?
-      self.build_command = cli_config.build_command if cli_config.sets_build_command?
-      self.run_command = cli_config.run_command if cli_config.sets_run_command?
-
-      self.build_args = cli_config.build_args if cli_config.sets_build_args?
-      self.run_args = cli_config.run_args unless cli_config.run_args.empty?
-      self.should_build = cli_config.should_build? if cli_config.sets_should_build?
-
-      self.watch = cli_config.watch if cli_config.sets_watch?
-      self.should_play_audio = cli_config.should_play_audio? if cli_config.sets_should_play_audio?
-
-      # following always use default
-      self.colorize = cli_config.colorize? if cli_config.sets_colorize?
       self.src_path = cli_config.src_path
+
+      self.display_name = cli_config.display_name if cli_config.sets_display_name?
+
+      self.build_command = cli_config.build_command if cli_config.sets_build_command?
+      self.build_args = cli_config.build_args if cli_config.sets_build_args?
+
+      self.run_command = cli_config.run_command if cli_config.sets_run_command?
+      self.run_args = cli_config.run_args unless cli_config.run_args.empty?
+
+      self.should_build = cli_config.should_build? if cli_config.sets_should_build?
+      self.should_play_audio = cli_config.should_play_audio? if cli_config.sets_should_play_audio?
+      self.watch = cli_config.watch if cli_config.sets_watch?
+      self.colorize = cli_config.colorize? if cli_config.sets_colorize?
 
       # following properties default value is false in cli_config, so it's work.
       self.info = cli_config.info? if cli_config.info?
