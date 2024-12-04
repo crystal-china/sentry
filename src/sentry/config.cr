@@ -32,6 +32,7 @@ module Sentry
 
     # Initializing an empty configuration provides no default values.
     def initialize
+      @watch = [] of String
     end
 
     def display_name=(new_display_name : String)
