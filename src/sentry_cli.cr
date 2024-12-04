@@ -127,8 +127,8 @@ default: #{cli_config.src_path})"
 
   parser.on(
     "--not-play-audio",
-    "Skips the attempt to play audio file with `aplay' from `alsa-utils' when building\
-on Linux succeeds or fails"
+    "Skips the attempt to play audio file with `aplay' from `alsa-utils' package \
+when building on Linux succeeds or fails"
   ) do
     cli_config.should_play_audio = false
   end

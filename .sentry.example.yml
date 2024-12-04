@@ -13,13 +13,20 @@ display_name: sentry
 # Set this to `true` to show configuration information when starting Sentry.
 info: true
 
+# Set this to `false` to removes colorization from output.
 colorize: false
 
+# Set this to `false` to skips the attempt to play audio file with `aplay'
+# from `alsa-utils' package when building on Linux succeeds or fails.
 play_audio: false
 
+# Set this to `false` to skips the build step.
 should_build: false
 
-# The command used to compile the application, e.g. crystal
+# Set this to `true` to run `shards install` once before Sentry build and run commands.
+run_shards_install: true
+
+# The command used to compile the application.
 build_command: crystal
 
 # Any additional arguments to pass to the build command.
@@ -30,8 +37,6 @@ run_command: ./bin/sentry
 
 # Any additional arguments to pass to the run command.
 run_args: -p 3288
-
-run_shards_install: true
 
 # The list of patterns of files for sentry to watch.
 watch:
