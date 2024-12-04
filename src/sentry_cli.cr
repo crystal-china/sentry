@@ -125,10 +125,11 @@ default: #{cli_config.src_path})"
   end
 
   parser.on(
-    "--no-sound",
-    "Skipping attempting to play success/failed sound files in Linux."
+    "--not-play-audio",
+    "Skips the attempt to play audio file with `aplay' from `alsa-utils' when building\
+on Linux succeeds or fails."
   ) do
-    cli_config.should_play_sound = false
+    cli_config.should_play_audio = false
   end
 
   parser.on(
@@ -183,7 +184,7 @@ process_runner = Sentry::ProcessRunner.new(
   should_build: config.should_build?,
   files: config.watch,
   should_install_shards: config.should_install_shards?,
-  should_play_sound: config.should_play_sound?,
+  should_play_audio: config.should_play_audio?,
   colorize: config.colorize?
 )
 

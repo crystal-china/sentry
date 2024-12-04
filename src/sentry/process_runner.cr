@@ -16,7 +16,7 @@ module Sentry
       @files = [] of String,
       @should_build = true,
       @should_install_shards = false,
-      @should_play_sound = true,
+      @should_play_audio = true,
       @colorize = true
     )
       @should_kill = false
@@ -27,7 +27,7 @@ module Sentry
       end
 
       {% if flag?(:linux) %}
-        @sound_player = Process.find_executable("aplay") if @should_play_sound
+        @sound_player = Process.find_executable("aplay") if @should_play_audio
       {% end %}
     end
 
