@@ -142,12 +142,21 @@ when building on Linux succeeds or fails"
   end
 
   parser.on(
+    "-V",
+    "--version",
+    "Shows version"
+  ) do
+    puts Sentry::VERSION
+    exit
+  end
+
+  parser.on(
     "-h",
     "--help",
     "Show this help"
   ) do
     puts parser
-    exit 0
+    exit
   end
 end
 
