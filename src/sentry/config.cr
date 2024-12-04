@@ -16,6 +16,8 @@ module Sentry
     property? sets_build_args : Bool = false
     @[YAML::Field(ignore: true)]
     property? sets_should_play_audio : Bool = false
+    @[YAML::Field(ignore: true)]
+    property? sets_should_build : Bool = false
 
     getter display_name : String { self.class.shard_name.to_s }
     property src_path : String?
@@ -70,6 +72,11 @@ module Sentry
       @should_play_audio = new
     end
 
+    def should_build=(new : Bool)
+      @sets_should_build = true
+      @should_build = new
+    end
+
     def run_args_list : Array(String)
       run_args.strip.split(" ").reject(&.empty?)
     end
@@ -81,12 +88,13 @@ module Sentry
 
       self.build_args = cli_config.build_args if cli_config.sets_build_args?
       self.run_args = cli_config.run_args unless cli_config.run_args.empty?
+      self.should_build = cli_config.should_build? if cli_config.sets_should_build?
 
       self.watch = cli_config.watch unless cli_config.watch.empty?
       self.should_play_audio = cli_config.should_play_audio? if cli_config.sets_should_play_audio?
 
       # following always use default
-      self.should_build = cli_config.should_build?
+
       self.colorize = cli_config.colorize?
       self.src_path = cli_config.src_path
 
