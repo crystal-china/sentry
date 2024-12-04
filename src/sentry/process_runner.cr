@@ -27,7 +27,7 @@ module Sentry
       end
 
       {% if flag?(:linux) %}
-        @sound_player = `which aplay 2>/dev/null`.chomp if @should_play_sound
+        @sound_player = Process.find_executable("aplay") if @should_play_sound
       {% end %}
     end
 
