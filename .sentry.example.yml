@@ -13,6 +13,8 @@ display_name: sentry
 # Set this to `true` to show configuration information when starting Sentry.
 info: true
 
+colorize: false
+
 play_audio: false
 
 should_build: false
