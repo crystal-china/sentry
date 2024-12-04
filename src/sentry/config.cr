@@ -20,10 +20,12 @@ module Sentry
     property? sets_should_build : Bool = false
     @[YAML::Field(ignore: true)]
     property? sets_colorize : Bool = false
+    @[YAML::Field(ignore: true)]
+    property? sets_watch : Bool = false
 
     getter display_name : String { self.class.shard_name.to_s }
     property src_path : String?
-    property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
+    getter watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
 
     getter build_command : String = "crystal"
     getter build_args : String? { "build #{src_path} -o #{run_command}" }
@@ -42,7 +44,6 @@ module Sentry
 
     # Initializing an empty configuration provides no default values.
     def initialize
-      @watch = [] of String
     end
 
     def display_name=(new : String)
@@ -84,6 +85,11 @@ module Sentry
       @colorize = new
     end
 
+    def watch=(new : Array(String))
+      @sets_watch = true
+      @watch = new
+    end
+
     def run_args_list : Array(String)
       run_args.strip.split(" ").reject(&.empty?)
     end
@@ -97,7 +103,7 @@ module Sentry
       self.run_args = cli_config.run_args unless cli_config.run_args.empty?
       self.should_build = cli_config.should_build? if cli_config.sets_should_build?
 
-      self.watch = cli_config.watch unless cli_config.watch.empty?
+      self.watch = cli_config.watch if cli_config.sets_watch?
       self.should_play_audio = cli_config.should_play_audio? if cli_config.sets_should_play_audio?
 
       # following always use default

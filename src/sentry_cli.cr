@@ -96,8 +96,10 @@ default: #{cli_config.src_path})"
   parser.on(
     "-w FILE",
     "--watch=FILE",
-    "Appends to default list of watched files, (default: #{cli_config.watch})"
+    "Appends to list of watched files, (will overrides default: #{cli_config.watch})"
   ) do |file|
+    cli_config.watch = [] of String unless cli_config.sets_watch?
+
     cli_config.watch << file
   end
 
@@ -111,8 +113,7 @@ default: #{cli_config.src_path})"
 
   parser.on(
     "--install",
-    "Run `shards install' once before running Sentry build and run commands, \
-(default: #{cli_config.should_install_shards?})"
+    "Run `shards install' once before running Sentry build and run commands"
   ) do
     cli_config.should_install_shards = true
   end
@@ -127,7 +128,7 @@ default: #{cli_config.src_path})"
   parser.on(
     "--not-play-audio",
     "Skips the attempt to play audio file with `aplay' from `alsa-utils' when building\
-on Linux succeeds or fails."
+on Linux succeeds or fails"
   ) do
     cli_config.should_play_audio = false
   end
@@ -135,7 +136,7 @@ on Linux succeeds or fails."
   parser.on(
     "-i",
     "--info",
-    "Shows the configuration informations, (default: #{cli_config.info?})"
+    "Shows the configuration informations"
   ) do
     cli_config.info = true
   end
@@ -163,6 +164,12 @@ else
   config_yaml = ""
 end
 
+# 这里配置文件的顺序是:
+# 1. 如果配置文件中有, 使用它
+# 2. 如果配置文件中没有, 使用 propety 的默认值, 1, 2 的行为就是反序列化的默认行为
+# 3. 如果通过某种方式判断, cli_config 中手动设定了某个值, 总是使用该值 (见 merge! 方法定义)
+
+# configurations deserialized from yaml use default values settings in getter/property.
 config = Sentry::Config.from_yaml(config_yaml)
 
 config.merge!(cli_config)
