@@ -57,8 +57,7 @@ default: #{cli_config.src_path})"
   end
 
   parser.on(
-    "-b COMMAND",
-    "--build=COMMAND",
+    "--build-command=COMMAND",
     "Overrides the default build command (default: #{cli_config.build_command})"
   ) do |command|
     cli_config.build_command = command
