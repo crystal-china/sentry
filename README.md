@@ -12,8 +12,8 @@
    In the configuration file, the corresponding `build`  has been changed to `build_args`
 3. The `-b` is still keep for backwards compatibility, but without the long-command form, 
    using `--src=src/foo.cr` is always recommended when there is no `shard.yml`.
-4. When build crystal program, if an invalid shard.yml was found, will create run command binary in the `./bin` 
-   folder instead of `./` respect the rule of `shards build`.
+4. When build crystal program, if a valid shard.yml was found, will create run command binary in the `./bin` 
+   folder instead of in the project root(`./`) respect the rule of `shards build`.
    
 
 # New feature
