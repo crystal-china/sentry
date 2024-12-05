@@ -4,6 +4,21 @@
 </p>
 <br>
 
+# Breaking Changes
+
+1. --build-command=COMMAND need specify the build command without args, e.g. crystal
+    In the configuration file, the corresponding `build`  has been changed to `build_command`
+2. --build-args=ARGS need specify build string but without the command part, e.g. `build src/sentry_cli.cr -o bin/sentry`
+   In the configuration file, the corresponding `build`  has been changed to `build_args`
+3. the `-b` is still keep for backwards compatibility, but without the long-command form.
+
+# New feature
+
+1. Many bugs get fixed.
+2. sentry will play a audio file when build success/fail, individually. (Linux only)
+3. now, configuration file support settings all options, except `--src`, latter tend to use in command line only,
+   instead of setting `--build-command` and `--build-args` or `-b` when there is no `shard.yml` exists.
+
 # Sentry 🤖
 
 Build/Runs your crystal application, watches files, and rebuilds/reruns app on file changes
@@ -40,14 +55,14 @@ For the detailed usage, please check following command-line help or check [.sent
 
 ```bash
  Usage: ./sentry [options]
-    -n NAME, --name=NAME             Sets the display name of the app process  (default: sentry)
-    --src=PATH                       Sets the entry path for the main crystal file inferred from shard.yml, (default: src/sentry_cli.cr)
+    -n NAME, --name=NAME             Sets the display name of the app process (default: sentry)
+    --src=PATH                       Sets the entry path for the main crystal file inferred from shard.yml (default: src/sentry_cli.cr)
     --build-command=COMMAND          Overrides the default build command (default: crystal)
-    --build-args=ARGS                Specifies arguments for the build command, (default: build src/sentry_cli.cr -o ./bin/sentry)
-    -b FULL-COMMAND                  Set both build command and build args, for backwards compatibility. (default: crystal build src/sentry_cli.cr -o ./bin/sentry)
+    --build-args=ARGS                Specifies arguments for the build command (default: build src/sentry_cli.cr -o ./bin/sentry)
+    -b FULL_COMMAND                  Set both `BUILD COMMAND' and `BUILD ARGS', for backwards compatibility (default: crystal build src/sentry_cli.cr -o ./bin/sentry)
     --no-build                       Skips the build step
-    -r COMMAND, --run=COMMAND        Overrides the default run command, you need sets same output filename as sets in --build-args if you prefer to set it, (default: ./bin/sentry)
-    --run-args=ARGS                  Specifies arguments for the run command, (default: )
+    -r COMMAND, --run=COMMAND        Overrides the default run command inferred from shard.yml (default: ./bin/sentry)
+    --run-args=ARGS                  Specifies arguments for the run command, (default: '')
     -w FILE, --watch=FILE            Appends to list of watched files, (will overrides default: ["./src/**/*.cr", "./src/**/*.ecr"])
     -c FILE, --config=FILE           Specifies a file to load for automatic configuration (default: .sentry.yml)
     --install                        Run `shards install' once before running Sentry build and run commands
