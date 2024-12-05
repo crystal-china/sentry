@@ -10,7 +10,8 @@
     In the configuration file, the corresponding `build`  has been changed to `build_command`
 2. --build-args=ARGS need specify build string but without the command part, e.g. `build src/sentry_cli.cr -o bin/sentry`
    In the configuration file, the corresponding `build`  has been changed to `build_args`
-3. the `-b` is still keep for backwards compatibility, but without the long-command form.
+3. the `-b` is still keep for backwards compatibility, but without the long-command form, Using `--src=src/foo.cr` is always recommended.
+   
 
 # New feature
 
