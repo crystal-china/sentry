@@ -10,7 +10,8 @@
     In the configuration file, the corresponding `build`  has been changed to `build_command`
 2. --build-args=ARGS need specify build string but without the command part, e.g. `build src/sentry_cli.cr -o bin/sentry`
    In the configuration file, the corresponding `build`  has been changed to `build_args`
-3. the `-b` is still keep for backwards compatibility, but without the long-command form, Using `--src=src/foo.cr` is always recommended.
+3. the `-b` is still keep for backwards compatibility, but without the long-command form, 
+   using `--src=src/foo.cr` is always recommended when there is no `shard.yml`.
    
 
 # New feature
@@ -26,10 +27,7 @@ Build/Runs your crystal application, watches files, and rebuilds/reruns app on f
 
 ## Installation
 
-To install in your project, from the root directory of your project, run:
-
-To use sentry, download released binary from [release page](https://github.com/crystal-china/sentry/releases), then copy it into
-a folder in the $PATH, run it!
+To use sentry, it is as easy as download released binary from [release page](https://github.com/crystal-china/sentry/releases), then copy it to anyway you want, just run it!
 
 ### Options
 
