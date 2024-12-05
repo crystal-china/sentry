@@ -43,14 +43,14 @@ OptionParser.parse do |parser|
   parser.on(
     "-n NAME",
     "--name=NAME",
-    "Sets the display name of the app process  (default: #{cli_config.display_name})"
+    "Sets the display name of the app process (default: #{cli_config.display_name})"
   ) do |opt|
     cli_config.display_name = opt
   end
 
   parser.on(
     "--src=PATH",
-    "Sets the entry path for the main crystal file inferred from shard.yml, (\
+    "Sets the entry path for the main crystal file inferred from shard.yml (\
 default: #{cli_config.src_path})"
   ) do |opt|
     cli_config.src_path = opt
@@ -65,9 +65,18 @@ default: #{cli_config.src_path})"
 
   parser.on(
     "--build-args=ARGS",
-    "Specifies arguments for the build command, (default: #{cli_config.build_args})"
+    "Specifies arguments for the build command (default: #{cli_config.build_args})"
   ) do |args|
     cli_config.build_args = args
+  end
+
+  parser.on(
+    "-b FULL_COMMAND",
+    "Set both `BUILD COMMAND' and `BUILD ARGS', for backwards compatibility (\
+  default: #{cli_config.build_command} #{cli_config.build_args})"
+  ) do |full_command|
+    cli_config.sets_build_full_command = true
+    cli_config.build_command, cli_config.build_args = full_command.split(" ", 2)
   end
 
   parser.on(
@@ -80,14 +89,14 @@ default: #{cli_config.src_path})"
   parser.on(
     "-r COMMAND",
     "--run=COMMAND",
-    "Overrides the default run command, (default: #{cli_config.run_command})"
+    "Overrides the default run command inferred from shard.yml (default: #{cli_config.run_command})"
   ) do |opt|
     cli_config.run_command = opt
   end
 
   parser.on(
     "--run-args=ARGS",
-    "Specifies arguments for the run command, (default: #{cli_config.run_args})"
+    "Specifies arguments for the run command, (default: '#{cli_config.run_args}')"
   ) do |opt|
     cli_config.run_args = opt
   end

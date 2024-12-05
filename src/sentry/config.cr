@@ -11,6 +11,8 @@ module Sentry
     @[YAML::Field(ignore: true)]
     property? sets_build_command : Bool = false
     @[YAML::Field(ignore: true)]
+    property? sets_build_full_command : Bool = false
+    @[YAML::Field(ignore: true)]
     property? sets_run_command : Bool = false
     @[YAML::Field(ignore: true)]
     property? sets_build_args : Bool = false
@@ -105,6 +107,11 @@ module Sentry
 
       self.build_command = cli_config.build_command if cli_config.sets_build_command?
       self.build_args = cli_config.build_args if cli_config.sets_build_args?
+
+      if cli_config.sets_build_full_command?
+        self.build_command = cli_config.build_command
+        self.build_args = cli_config.build_args
+      end
 
       self.run_command = cli_config.run_command if cli_config.sets_run_command?
       self.run_args = cli_config.run_args unless cli_config.run_args.empty?
