@@ -30,6 +30,7 @@ if name.nil? || run_command.nil? || src_path.nil?
   cli_config.src_path = nil
   cli_config.run_command = nil
 else
+  Dir.mkdir("./bin") unless Dir.exists?("./bin")
   cli_config.src_path = src_path
   cli_config.run_command = run_command
 end
