@@ -36,6 +36,8 @@ module Sentry
 
       run_shards_install if @run_shards_install
 
+      File.delete?(@run_command) if @should_build
+
       loop do
         if @should_kill
           stdout "🤖  Powering down your SentryBot..."
