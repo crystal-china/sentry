@@ -158,12 +158,19 @@ module Sentry
 
       stdout "🤖  starting #{@display_name}..."
 
-      @app_process = Process.new(
-        @run_command,
-        @run_args_list,
-        output: :inherit,
-        error: :inherit
-      )
+      if File.exists?(@run_command)
+        @app_process = Process.new(
+          @run_command,
+          @run_args_list,
+          output: :inherit,
+          error: :inherit
+        )
+      else
+        puts "🤖  Sentry error: the inferred run command file(#{@run_command}) \
+does not exist. either set correct run command use `-r COMMAND' or fix the \
+`BUILD ARGS' to output correct run command. SentryBot shutting down..."
+        exit 1
+      end
     end
 
     private def stdout(str : String) : Nil
