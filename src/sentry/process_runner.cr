@@ -158,7 +158,7 @@ module Sentry
 
       stdout "🤖  starting #{@display_name}..."
 
-      if File.exists?(@run_command)
+      if File.file?(@run_command)
         @app_process = Process.new(
           @run_command,
           @run_args_list,
