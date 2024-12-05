@@ -54,6 +54,7 @@ OptionParser.parse do |parser|
 default: #{cli_config.src_path})"
   ) do |opt|
     cli_config.src_path = opt
+    cli_config.run_command = nil
   end
 
   parser.on(

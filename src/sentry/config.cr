@@ -32,7 +32,7 @@ module Sentry
     getter build_command : String = "crystal"
     getter build_args : String? { "build #{src_path} -o #{run_command}" }
 
-    getter run_command : String? { self.class.shard_name ? "./bin/#{self.class.shard_name}" : "bin/app" }
+    getter run_command : String? { "./#{src_path.to_s[/\/([^\/]*).cr$/, 1]?}" }
     property run_args : String = ""
 
     getter? should_build : Bool { !build_command.blank? }
