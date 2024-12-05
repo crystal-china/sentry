@@ -190,6 +190,10 @@ end
 # configurations deserialized from yaml use default values settings in getter/property.
 config = Sentry::Config.from_yaml(config_yaml)
 
+if config.run_command.blank? && !shard_run_command.nil?
+  config.run_command = shard_run_command
+end
+
 config.merge!(cli_config)
 
 if config.info?
