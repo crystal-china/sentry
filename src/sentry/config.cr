@@ -7,23 +7,24 @@ module Sentry
     class_property shard_name : String?
 
     @[YAML::Field(ignore: true)]
-    property? sets_display_name : Bool = false
-    @[YAML::Field(ignore: true)]
-    property? sets_build_command : Bool = false
-    @[YAML::Field(ignore: true)]
     property? sets_build_full_command : Bool = false
     @[YAML::Field(ignore: true)]
     property? sets_run_command : Bool = false
     @[YAML::Field(ignore: true)]
-    property? sets_build_args : Bool = false
+
     @[YAML::Field(ignore: true)]
-    property? sets_should_play_audio : Bool = false
+    getter? sets_display_name : Bool = false
     @[YAML::Field(ignore: true)]
-    property? sets_should_build : Bool = false
+    getter? sets_build_command : Bool = false
+    getter? sets_build_args : Bool = false
     @[YAML::Field(ignore: true)]
-    property? sets_colorize : Bool = false
+    getter? sets_should_play_audio : Bool = false
     @[YAML::Field(ignore: true)]
-    property? sets_watch : Bool = false
+    getter? sets_should_build : Bool = false
+    @[YAML::Field(ignore: true)]
+    getter? sets_colorize : Bool = false
+    @[YAML::Field(ignore: true)]
+    getter? sets_watch : Bool = false
 
     property src_path : String?
 
