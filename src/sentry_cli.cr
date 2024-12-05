@@ -4,38 +4,37 @@ require "./sentry"
 
 begin
   shard_yml = YAML.parse File.read("shard.yml")
-  name = shard_yml["name"]?
-  Sentry::Config.shard_name = name.as_s if name
+  shard_name = shard_yml["name"]?
+  Sentry::Config.shard_name = shard_name.as_s if shard_name
 rescue e
 end
 
 # Set the default entry src path and build output binary name from shard.yml
 if shard_yml && (targets = shard_yml["targets"]?)
   # use targets[<shard_name>]["main"] if exists
-  if name && (main_path = targets.dig?(name, "main"))
-    run_command = "./bin/#{name.as_s}"
-    src_path = main_path.as_s
+  if shard_name && (main_path = targets.dig?(shard_name, "main"))
+    shard_run_command = "./bin/#{shard_name.as_s}"
+    shard_src_path = main_path.as_s
   elsif (raw = targets.raw) && raw.is_a?(Hash)
     # otherwise, use the first key you find targets[<first_key>]["main"]
     if (first_key = raw.keys[0]?) && (main_path = targets.dig?(first_key, "main"))
-      run_command = "./bin/#{first_key.as_s}"
-      src_path = main_path.as_s
+      shard_run_command = "./bin/#{first_key.as_s}"
+      shard_src_path = main_path.as_s
     end
   end
 end
 
 cli_config = Sentry::Config.new
 
-if name.nil? || run_command.nil? || src_path.nil?
+if shard_run_command.nil? || shard_src_path.nil?
   cli_config.src_path = nil
   cli_config.run_command = nil
 else
   Dir.mkdir("./bin") unless Dir.exists?("./bin")
-  cli_config.src_path = src_path
-  cli_config.run_command = run_command
+  cli_config.src_path = shard_src_path
+  cli_config.run_command = shard_run_command
+  cli_config.sets_run_command = false
 end
-
-cli_config.sets_run_command = false
 
 cli_config_file_name = ".sentry.yml"
 
