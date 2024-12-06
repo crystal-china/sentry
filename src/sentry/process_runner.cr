@@ -139,6 +139,14 @@ module Sentry
     private def build_app_process : Process::Status
       stdout "🤖  compiling #{@display_name}..."
 
+      {% if flag?(:win32) %}
+        if (app_process = @app_process).is_a? Process
+          stdout "🤖  killing #{@display_name}..."
+          app_process.terminate
+          # app_process.wait
+        end
+      {% end %}
+
       Process.run(
         @build_command,
         @build_args_list,
@@ -151,7 +159,7 @@ module Sentry
       if (app_process = @app_process).is_a? Process
         unless app_process.terminated?
           stdout "🤖  killing #{@display_name}..."
-          app_process.signal(:kill)
+          app_process.terminate
           app_process.wait
         end
       end
