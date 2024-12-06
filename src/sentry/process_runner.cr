@@ -23,8 +23,11 @@ module Sentry
       @should_kill = false
       @app_built = false
 
-      Signal::INT.trap do
-        @should_kill = true
+      Process.on_terminate do |reason|
+        case reason
+        when .interrupted?
+          @should_kill = true
+        end
       end
 
       {% if flag?(:linux) %}
