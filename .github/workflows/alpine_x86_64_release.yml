@@ -42,6 +42,7 @@ jobs:
       - name: Build release binary
         id: release
         run: |
+          git config --global --add safe.directory /__w/sentry/sentry
           echo "ASSERT_NAME=${{env.ASSERT_NAME}}" >> $GITHUB_OUTPUT
           shards build --production --progress --no-debug -Dstrict_multi_assign -Dno_number_autocast ${{env.BUILD_ARGS}}
           tar zcvf ${{env.ASSERT_NAME}} ${{env.BINARY_NAME}} LICENSE
