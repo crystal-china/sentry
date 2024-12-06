@@ -6,8 +6,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: crystallang/crystal:latest-alpine
     steps:
       - name: Cache shards
         uses: actions/cache@v2
@@ -19,6 +17,9 @@ jobs:
       - name: Download source
         uses: actions/checkout@v4
 
+      - name: Install Crystal
+        uses: crystal-lang/install-crystal@v1
+
       - name: Install shards
         run: shards check || shards install --without-development
 
@@ -26,14 +27,14 @@ jobs:
         run: crystal tool format --check
 
       - name: Run tests
-        run: crystal spec --order=random --error-on-warnings
+        run: KEMAL_ENV=test crystal spec --order=random --error-on-warnings
 
       - name: Collect package information
         run: |
           echo "BINARY_NAME=bin/$(cat shard.yml |grep targets -A1|tail -n1 |sed 's#[ :]##g')" >> $GITHUB_ENV
           echo "PKG_ARCH=x86_64" >> $GITHUB_ENV
-          echo "PLATFORM=unknown-linux-musl.tar.gz" >> $GITHUB_ENV
-          echo "BUILD_ARGS=--static --link-flags=\"-s -Wl,-z,relro,-z,now\"" >> $GITHUB_ENV
+          echo "PLATFORM=unknown-linux-gnu.tar.gz" >> $GITHUB_ENV
+          echo "BUILD_ARGS=--link-flags=\"-s -Wl,-z,relro,-z,now\"" >> $GITHUB_ENV
 
       - name: Set asset name
         run: |
