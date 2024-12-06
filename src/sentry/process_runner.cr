@@ -2,9 +2,10 @@ module Sentry
   class ProcessRunner
     FILE_TIMESTAMPS = {} of String => String # {file => timestamp}
 
-    @sound_player : String?
-    @success_wav : BakedFileSystem::BakedFile = SoundFileStorage.get("success.wav")
-    @error_wav : BakedFileSystem::BakedFile = SoundFileStorage.get("error.wav")
+    {% if flag?(:linux) %}
+      @audio_player : AudioPlayer?
+    {% end %}
+
     @app_process : Process?
 
     def initialize(
@@ -27,7 +28,7 @@ module Sentry
       end
 
       {% if flag?(:linux) %}
-        @sound_player = Process.find_executable("aplay") if @should_play_audio
+        @audio_player = AudioPlayer.new if @should_play_audio
       {% end %}
     end
 
@@ -104,33 +105,29 @@ module Sentry
     private def start_app : Process?
       return create_app_process unless @should_build
 
-      sound_player = @sound_player
+      audio_player = nil
+
+      {% if flag?(:linux) %}
+        audio_player = @audio_player
+      {% end %}
+
       build_result = build_app_process
 
       if build_result && build_result.success?
         @app_built = true
         process = create_app_process
 
-        unless sound_player.nil?
-          Process.new(command: sound_player, input: @success_wav)
-          @success_wav.rewind
-        end
+        audio_player.success unless audio_player.nil?
 
         process
       elsif !@app_built # if build fails on first time compiling, then exit
         stdout "🤖  Compile time errors detected. SentryBot shutting down..."
 
-        unless sound_player.nil?
-          Process.new(command: sound_player, input: @error_wav)
-          @error_wav.rewind
-        end
+        audio_player.error unless audio_player.nil?
 
         exit 1
       else
-        unless sound_player.nil?
-          Process.new(command: sound_player, input: @error_wav)
-          @error_wav.rewind
-        end
+        audio_player.error unless audio_player.nil?
 
         nil
       end
