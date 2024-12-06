@@ -35,12 +35,20 @@ module Sentry
       {% end %}
     end
 
+    def run_command : String
+      {% if flag?(:win32) %}
+        "#{@run_command}.exe"
+      {% else %}
+        @run_command
+      {% end %}
+    end
+
     def run : Nil
       stdout "🤖  Your SentryBot is vigilant. beep-boop..."
 
       run_shards_install if @run_shards_install
 
-      File.delete?(@run_command) if @should_build
+      File.delete?(run_command) if @should_build
 
       loop do
         if @should_kill
@@ -166,15 +174,15 @@ module Sentry
 
       stdout "🤖  starting #{@display_name}..."
 
-      if File.file?(@run_command)
+      if File.file?(run_command)
         @app_process = Process.new(
-          @run_command,
+          run_command,
           @run_args_list,
           output: :inherit,
           error: :inherit
         )
       else
-        puts "🤖  Sentry error: the inferred run command file(#{@run_command}) \
+        puts "🤖  Sentry error: the inferred run command file(#{run_command}) \
 does not exist. either set correct run command use `-r COMMAND' or fix the \
 `BUILD ARGS' to output correct run command. SentryBot shutting down..."
         exit 1
