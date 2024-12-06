@@ -1,0 +1,49 @@
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - name: Cache shards
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/shards
+          key: ${{ runner.os }}-shards-${{ hashFiles('shard.yml') }}
+          restore-keys: ${{ runner.os }}-shards-
+
+      - name: Download source
+        uses: actions/checkout@v4
+
+      - name: Install Crystal
+        uses: crystal-lang/install-crystal@v1
+
+      - name: Install shards
+        run: shards check || shards install --without-development
+
+      - name: Collect package information
+        run: |
+          echo "BINARY_NAME=bin/$(cat shard.yml |Select-String -Pattern 'targets:' -Context 1 |%{$_ -replace '> targets:',''}|%{$_ -replace '[\s:]*',''})" >> $Env:GITHUB_ENV
+          echo "PKG_ARCH=x86_64" >> $Env:GITHUB_ENV
+          echo "PLATFORM=pc-windows-msvc.zip" >> $Env:GITHUB_ENV
+          echo "BUILD_ARGS=" >> $Env:GITHUB_ENV
+
+      - name: Set asset name
+        run: |
+          echo "ASSERT_NAME=${{env.BINARY_NAME}}-${{github.ref_name}}-${{env.PKG_ARCH}}-${{env.PLATFORM}}" >> $Env:GITHUB_ENV
+
+      - name: Build release binary
+        id: release
+        run: |
+          echo "ASSERT_NAME=${{env.ASSERT_NAME}}" >> $Env:GITHUB_OUTPUT
+          shards build --production --progress --no-debug -Dstrict_multi_assign -Dno_number_autocast ${{env.BUILD_ARGS}}
+          7z a ${{env.ASSERT_NAME}} ${{env.BINARY_NAME}}.exe LICENSE
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ${{steps.release.outputs.ASSERT_NAME}}
