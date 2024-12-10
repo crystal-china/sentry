@@ -2,9 +2,10 @@ module Sentry
   class ProcessRunner
     FILE_TIMESTAMPS = {} of String => String # {file => timestamp}
 
-    @sound_player : String?
-    @success_wav : BakedFileSystem::BakedFile = SoundFileStorage.get("success.wav")
-    @error_wav : BakedFileSystem::BakedFile = SoundFileStorage.get("error.wav")
+    {% if flag?(:linux) %}
+      @audio_player : AudioPlayer?
+    {% end %}
+
     @app_process : Process?
 
     def initialize(
@@ -22,12 +23,23 @@ module Sentry
       @should_kill = false
       @app_built = false
 
-      Signal::INT.trap do
-        @should_kill = true
+      Process.on_terminate do |reason|
+        case reason
+        when .interrupted?
+          @should_kill = true
+        end
       end
 
       {% if flag?(:linux) %}
-        @sound_player = Process.find_executable("aplay") if @should_play_audio
+        @audio_player = AudioPlayer.new if @should_play_audio
+      {% end %}
+    end
+
+    def run_command : String
+      {% if flag?(:win32) %}
+        "#{@run_command}.exe"
+      {% else %}
+        @run_command
       {% end %}
     end
 
@@ -36,7 +48,7 @@ module Sentry
 
       run_shards_install if @run_shards_install
 
-      File.delete?(@run_command) if @should_build
+      File.delete?(run_command) if @should_build
 
       loop do
         if @should_kill
@@ -104,33 +116,29 @@ module Sentry
     private def start_app : Process?
       return create_app_process unless @should_build
 
-      sound_player = @sound_player
+      audio_player = nil
+
+      {% if flag?(:linux) %}
+        audio_player = @audio_player
+      {% end %}
+
       build_result = build_app_process
 
       if build_result && build_result.success?
         @app_built = true
         process = create_app_process
 
-        unless sound_player.nil?
-          Process.new(command: sound_player, input: @success_wav)
-          @success_wav.rewind
-        end
+        audio_player.success unless audio_player.nil?
 
         process
       elsif !@app_built # if build fails on first time compiling, then exit
         stdout "🤖  Compile time errors detected. SentryBot shutting down..."
 
-        unless sound_player.nil?
-          Process.new(command: sound_player, input: @error_wav)
-          @error_wav.rewind
-        end
+        audio_player.error unless audio_player.nil?
 
         exit 1
       else
-        unless sound_player.nil?
-          Process.new(command: sound_player, input: @error_wav)
-          @error_wav.rewind
-        end
+        audio_player.error unless audio_player.nil?
 
         nil
       end
@@ -138,6 +146,14 @@ module Sentry
 
     private def build_app_process : Process::Status
       stdout "🤖  compiling #{@display_name}..."
+
+      {% if flag?(:win32) %}
+        if (app_process = @app_process).is_a? Process
+          stdout "🤖  killing #{@display_name}..."
+          app_process.terminate
+          # app_process.wait
+        end
+      {% end %}
 
       Process.run(
         @build_command,
@@ -151,22 +167,22 @@ module Sentry
       if (app_process = @app_process).is_a? Process
         unless app_process.terminated?
           stdout "🤖  killing #{@display_name}..."
-          app_process.signal(:kill)
+          app_process.terminate
           app_process.wait
         end
       end
 
       stdout "🤖  starting #{@display_name}..."
 
-      if File.file?(@run_command)
+      if File.file?(run_command)
         @app_process = Process.new(
-          @run_command,
+          run_command,
           @run_args_list,
           output: :inherit,
           error: :inherit
         )
       else
-        puts "🤖  Sentry error: the inferred run command file(#{@run_command}) \
+        puts "🤖  Sentry error: the inferred run command file(#{run_command}) \
 does not exist. either set correct run command use `-r COMMAND' or fix the \
 `BUILD ARGS' to output correct run command. SentryBot shutting down..."
         exit 1
