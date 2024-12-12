@@ -1,5 +1,5 @@
 name: sentry
-version: 0.7.0
+version: 0.7.1
 
 targets:
   sentry:
@@ -12,5 +12,6 @@ dependencies:
 
 authors:
   - Sam Eaton <sam@eaton.party>
+  - Billy.Zheng (vil963@gmail.com)
 crystal: ">= 0.34.0"
 license: ISC
