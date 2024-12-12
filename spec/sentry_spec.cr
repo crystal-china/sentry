@@ -39,7 +39,7 @@ describe Sentry do
         config = cli.config
 
         config.sets_build_full_command?.should be_false
-        config.sets_run_command?.should be_true
+        config.sets_run_command?.should be_false
         config.sets_display_name?.should be_false
         config.sets_build_command?.should be_false
         config.sets_build_args?.should be_false
@@ -100,7 +100,7 @@ describe Sentry do
         config = cli.config
 
         config.sets_build_full_command?.should be_false
-        config.sets_run_command?.should be_true
+        config.sets_run_command?.should be_false
         config.sets_display_name?.should be_false
         config.sets_build_command?.should be_false
         config.sets_build_args?.should be_false

@@ -208,6 +208,7 @@ when building on Linux succeeds or fails"
 
     if config.run_command.blank? && !@shard_run_command.nil?
       config.run_command = @shard_run_command
+      config.sets_run_command = false
     end
 
     config.merge!(cli_config)
