@@ -127,7 +127,7 @@ module Sentry
       self.run_shards_install = cli_config.run_shards_install? if cli_config.run_shards_install?
     end
 
-    def to_s(io : IO)
+    def to_s(io : IO) : IO
       io << <<-CONFIG
       🤖  Sentry configuration:
             display name:           #{display_name}

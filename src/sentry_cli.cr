@@ -38,7 +38,7 @@ class SentryCli
   )
   end
 
-  def cli_config
+  def cli_config : Sentry::Config
     @cli_config ||= begin
       cli_config = Sentry::Config.new
 
@@ -191,7 +191,7 @@ when building on Linux succeeds or fails"
     end
   end
 
-  def config
+  def config : Sentry::Config
     # It's necessary to run it once here to set correct @cli_config_file_name if use -c option.
     cli_config = self.cli_config
 
