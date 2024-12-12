@@ -170,11 +170,6 @@ when building on Linux succeeds or fails"
   end
 end
 
-module Sentry
-  class SentryCli
-  end
-end
-
 if cli_config.src_path.nil?
   puts "🤖  Sentry error: please set the entry path for the main crystal file use \
   --src or create a valid shard.yml"
@@ -182,25 +177,40 @@ if cli_config.src_path.nil?
   exit 1
 end
 
-if File.exists?(cli_config_file_name)
-  config_yaml = File.read(cli_config_file_name)
-else
-  config_yaml = ""
+class SentryCli
+  def initialize(
+    @cli_config_file_name : String,
+    @shard_run_command : String?,
+    @cli_config : Sentry::Config
+  )
+  end
+
+  def load
+    if File.exists?(@cli_config_file_name)
+      config_yaml = File.read(@cli_config_file_name)
+    else
+      config_yaml = ""
+    end
+
+    # 这里配置文件的顺序是:
+    # 1. 如果配置文件中有, 使用它
+    # 2. 如果配置文件中没有, 使用 propety 的默认值, 1, 2 的行为就是反序列化的默认行为
+    # 3. 如果通过某种方式判断, cli_config 中手动设定了某个值, 总是使用该值 (见 merge! 方法定义)
+
+    # configurations deserialized from yaml use default values settings in getter/property.
+    config = Sentry::Config.from_yaml(config_yaml)
+
+    if config.run_command.blank? && !@shard_run_command.nil?
+      config.run_command = @shard_run_command
+    end
+
+    config.merge!(@cli_config)
+
+    config
+  end
 end
 
-# 这里配置文件的顺序是:
-# 1. 如果配置文件中有, 使用它
-# 2. 如果配置文件中没有, 使用 propety 的默认值, 1, 2 的行为就是反序列化的默认行为
-# 3. 如果通过某种方式判断, cli_config 中手动设定了某个值, 总是使用该值 (见 merge! 方法定义)
-
-# configurations deserialized from yaml use default values settings in getter/property.
-config = Sentry::Config.from_yaml(config_yaml)
-
-if config.run_command.blank? && !shard_run_command.nil?
-  config.run_command = shard_run_command
-end
-
-config.merge!(cli_config)
+config = SentryCli.new(cli_config_file_name, shard_run_command, cli_config).load
 
 if config.info?
   if config.colorize?
