@@ -69,7 +69,9 @@ class SentryCli
 default: #{cli_config.src_path})"
         ) do |opt|
           cli_config.src_path = opt
-          # Update run_command to nil make run_command re-evaluate.
+          # Update build_args, run_command to nil make both getter re-evaluate
+          # use default value.
+          cli_config.build_args = nil
           cli_config.run_command = nil
         end
 
@@ -93,7 +95,7 @@ default: #{cli_config.src_path})"
   default: #{cli_config.build_command} #{cli_config.build_args})"
         ) do |full_command|
           cli_config.sets_build_full_command = true
-          cli_config.build_command, cli_config.build_args = full_command.split(" ", 2)
+          cli_config.build_command, cli_config.build_args = full_command.lstrip.split(" ", 2)
         end
 
         parser.on(
@@ -190,6 +192,9 @@ when building on Linux succeeds or fails"
   end
 
   def config
+    # It's necessary to run it once here to set correct @cli_config_file_name if use -c option.
+    cli_config = self.cli_config
+
     if File.exists?(@cli_config_file_name)
       config_yaml = File.read(@cli_config_file_name)
     else

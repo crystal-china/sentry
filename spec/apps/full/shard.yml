@@ -1,0 +1,16 @@
+name: sentry
+version: 0.7.0
+
+targets:
+  sentry:
+    main: src/sentry_cli.cr
+
+dependencies:
+  baked_file_system:
+    github: schovi/baked_file_system
+    version: 0.10.0
+
+authors:
+  - Sam Eaton <sam@eaton.party>
+crystal: ">= 0.34.0"
+license: ISC
