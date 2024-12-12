@@ -42,3 +42,4 @@ run_args: -p 3288
 watch:
   - ./src/**/*.cr
   - ./src/**/*.ecr
+  - ./spec/**/*.cr
