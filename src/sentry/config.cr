@@ -63,7 +63,7 @@ module Sentry
       @build_command = new
     end
 
-    def build_args=(new : String)
+    def build_args=(new : String?)
       @sets_build_args = true
       @build_args = new
     end

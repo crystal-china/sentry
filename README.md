@@ -29,7 +29,7 @@ Build/Runs your crystal application, watches files, and rebuilds/reruns app on f
 
 ## Installation
 
-To use sentry, it is as easy as download released binary from [release page](https://github.com/crystal-china/sentry/releases), then copy it to anyway you want, just run it!
+Download released binary from [release page](https://github.com/crystal-china/sentry/releases), run it!
 
 ### Options
 
