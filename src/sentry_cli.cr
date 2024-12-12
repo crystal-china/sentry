@@ -1,3 +1,4 @@
+require "yaml"
 require "option_parser"
 require "colorize"
 require "./sentry"
@@ -166,6 +167,11 @@ when building on Linux succeeds or fails"
   ) do
     puts parser
     exit
+  end
+end
+
+module Sentry
+  class SentryCli
   end
 end
 
