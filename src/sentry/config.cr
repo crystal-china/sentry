@@ -33,7 +33,7 @@ module Sentry
     getter build_command : String = "crystal"
     getter build_args : String? { "build #{src_path} -o #{run_command}" }
 
-    getter run_command : String? { "#{src_path.to_s[/\/([^\/]*).cr$/, 1]?}" }
+    getter run_command : String? { "#{src_path.to_s[%r(/([^/]*).cr$), 1]?}" }
     property run_args : String = ""
 
     getter? should_build : Bool { !build_command.blank? }
@@ -63,7 +63,7 @@ module Sentry
       @build_command = new
     end
 
-    def build_args=(new : String)
+    def build_args=(new : String?)
       @sets_build_args = true
       @build_args = new
     end
@@ -127,7 +127,7 @@ module Sentry
       self.run_shards_install = cli_config.run_shards_install? if cli_config.run_shards_install?
     end
 
-    def to_s(io : IO)
+    def to_s(io : IO) : IO
       io << <<-CONFIG
       🤖  Sentry configuration:
             display name:           #{display_name}

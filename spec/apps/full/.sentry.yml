@@ -1,0 +1,14 @@
+display_name: app
+info: true
+colorize: false
+play_audio: false
+should_build: false
+run_shards_install: true
+build_command: crystal
+build_args: build ./src/app.cr -o ./bin/app
+run_command: ./bin/app
+run_args: -p 3288
+watch:
+  - ./src/**/*.cr
+  - ./src/**/*.ecr
+  - ./spec/**/*.cr

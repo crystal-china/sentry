@@ -8,7 +8,7 @@
 
 # The name of your application when displayed in log output. By default, this
 # is the app name specified in `shard.yml`.
-display_name: sentry
+display_name: app
 
 # Set this to `true` to show configuration information when starting Sentry.
 info: true
@@ -30,10 +30,10 @@ run_shards_install: true
 build_command: crystal
 
 # Any additional arguments to pass to the build command.
-build_args: build ./src/sentry_cli.cr -o ./bin/sentry
+build_args: build ./src/app.cr -o ./bin/app
 
 # The command used to run the compiled application.
-run_command: ./bin/sentry
+run_command: ./bin/app
 
 # Any additional arguments to pass to the run command.
 run_args: -p 3288
