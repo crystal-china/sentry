@@ -191,7 +191,7 @@ when building on Linux succeeds or fails"
     @cli_config = cli_config
   end
 
-  def load
+  def config
     if File.exists?(@cli_config_file_name)
       config_yaml = File.read(@cli_config_file_name)
     else
@@ -216,7 +216,7 @@ when building on Linux succeeds or fails"
   end
 end
 
-config = SentryCli.new(shard_src_path, shard_run_command).load
+config = SentryCli.new(shard_src_path, shard_run_command).config
 
 if config.info?
   if config.colorize?

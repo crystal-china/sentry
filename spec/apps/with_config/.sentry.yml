@@ -1,0 +1,44 @@
+# This file is used to override the default Sentry configuration without
+# having to specify the options on the command line.
+#
+# All configuration options in this file are optional, and will fall back
+# to the default values that Sentry determines based on your `shard.yml`.
+#
+# Options passed through the command line will override these settings.
+
+# The name of your application when displayed in log output. By default, this
+# is the app name specified in `shard.yml`.
+display_name: sentry
+
+# Set this to `true` to show configuration information when starting Sentry.
+info: true
+
+# Set this to `false` to removes colorization from output.
+colorize: false
+
+# Set this to `false` to skips the attempt to play audio file with `aplay'
+# from `alsa-utils' package when building on Linux succeeds or fails.
+play_audio: false
+
+# Set this to `false` to skips the build step.
+should_build: false
+
+# Set this to `true` to run `shards install` once before Sentry build and run commands.
+run_shards_install: true
+
+# The command used to compile the application.
+build_command: crystal
+
+# Any additional arguments to pass to the build command.
+build_args: build ./src/sentry_cli.cr -o ./bin/sentry
+
+# The command used to run the compiled application.
+run_command: ./bin/sentry
+
+# Any additional arguments to pass to the run command.
+run_args: -p 3288
+
+# The list of patterns of files for sentry to watch.
+watch:
+  - ./src/**/*.cr
+  - ./src/**/*.ecr
