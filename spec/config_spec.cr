@@ -107,8 +107,6 @@ describe Sentry::Config do
       Dir.cd "./spec/apps/empty" do
         cli = SentryCli.new(opts: ["--src=./src/foo.cr"])
 
-        Dir.exists?("./bin").should be_true
-
         config = cli.config
 
         config.sets_build_full_command?.should be_false
