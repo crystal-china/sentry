@@ -19,11 +19,14 @@ jobs:
       - name: Download source
         uses: actions/checkout@v4
 
+      - name: Check formatting
+        run: crystal tool format --check
+
       - name: Install shards
         run: shards check || shards install --without-development
 
-      - name: Check formatting
-        run: crystal tool format --check
+      - name: Disable git safe repository checks
+        run: git config --global --add safe.directory '*'
 
       - name: Run tests
         run: crystal spec --order=random --error-on-warnings
@@ -42,13 +45,12 @@ jobs:
       - name: Build release binary
         id: release
         run: |
-          git config --global --add safe.directory /__w/sentry/sentry
           echo "ASSERT_NAME=${{env.ASSERT_NAME}}" >> $GITHUB_OUTPUT
           shards build --production --progress --no-debug -Dstrict_multi_assign -Dno_number_autocast ${{env.BUILD_ARGS}}
           tar zcvf ${{env.ASSERT_NAME}} ${{env.BINARY_NAME}} LICENSE
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
