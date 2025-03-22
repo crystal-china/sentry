@@ -34,7 +34,7 @@ class SentryCli
   def initialize(
     @shard_src_path : String? = nil,
     @shard_run_command : String? = nil,
-    @opts : Array(String) = ARGV
+    @opts : Array(String) = ARGV,
   )
   end
 

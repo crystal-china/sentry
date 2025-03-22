@@ -18,7 +18,7 @@ module Sentry
       @should_build = true,
       @run_shards_install = false,
       @should_play_audio = true,
-      @colorize = true
+      @colorize = true,
     )
       @should_kill = false
       @app_built = false
