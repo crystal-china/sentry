@@ -116,8 +116,20 @@ This shows the values for the build command, run command, and watched files.
 If you prefer granularity, you can specify arguments to the build or run commands using the `--build-args` or `--run-args` flags followed by a string of arguments.
 
 ```bash
-./sentry -r "crystal" --run-args "spec --debug"
+# For run spec automatically when file changes
+KEMAL_ENV=test sentry -r 'crystal' --run-args='spec' --no-build
 ```
+
+You can run multiple sentry process on same project by open a new terminal.
+
+```bash
+# For run tailwindcss generate output.css
+sentry -r 'tailwindcss' --run-args='-o output.css' --no-build
+```
+
+__NOTICE__, When set `-r`, `--run-args` manually, with `--no-build` usually a good
+idea to skip (unused) crystal build process.
+
 
 #### Running `shards install` Before Starting
 
